@@ -124,8 +124,8 @@ pharmazone/
 
 This project was developed as part of BIM 6th Semester coursework.
 
-**Developed by:** [Your Name]  
-**Institution:** [Your College Name]  
+**Developed by:** [Srijana Khatri]  
+**Institution:** [St.Xavier's College, Maitighar]  
 **Year:** 2025
 
 ## License
