@@ -1,4 +1,4 @@
-# Pharmazone - Online Pharmacy E-Commerce Platform
+<img width="1440" height="819" alt="Screenshot 2025-11-18 at 11 20 52" src="https://github.com/user-attachments/assets/311156fa-c3a7-473f-83c1-421b2900bf33" /># Pharmazone - Online Pharmacy E-Commerce Platform
 
 A comprehensive online pharmacy e-commerce platform built with Django for BIM 6th Semester Project.
 
@@ -117,15 +117,14 @@ pharmazone/
 3. **Customer** - Browse and purchase medicines
 
 ## Screenshots
-
-(Add screenshots of your application here)
+![Uploading Screenshot 2025-11-18 at 11.20.52.png…]()<img width="1440" height="819" alt="Screenshot 2025-11-18 at 11 23 11" src="https://github.com/user-attachments/assets/43aa9329-8379-4725-9bbb-bc5f0eb8392b" />
 
 ## Academic Project
 
 This project was developed as part of BIM 6th Semester coursework.
 
-**Developed by:** [Srijana Khatri]  
-**Institution:** [St.Xavier's College, Maitighar]  
+**Developed by:** Srijana Khatri
+**Institution:** St.Xavier's College, Maitighar
 **Year:** 2025
 
 ## License
