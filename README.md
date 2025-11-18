@@ -28,7 +28,7 @@ A comprehensive online pharmacy e-commerce platform built with Django for BIM 6t
 - Back-to-top button
 - Gradient colors and professional styling
 
-## 🛠️ Technologies Used
+##  Technologies Used
 
 - **Backend:** Django 5.2.7
 - **Frontend:** HTML5, CSS3, Bootstrap 5.3
