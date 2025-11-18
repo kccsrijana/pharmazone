@@ -117,7 +117,7 @@ pharmazone/
 3. **Customer** - Browse and purchase medicines
 
 ## Screenshots
-![Uploading Screenshot 2025-11-18 at 11.20.52.png…]()<img width="1440" height="819" alt="Screenshot 2025-11-18 at 11 23 11" src="https://github.com/user-attachments/assets/43aa9329-8379-4725-9bbb-bc5f0eb8392b" />
+<img width="1440" height="819" alt="Screenshot 2025-11-18 at 11 23 11" src="https://github.com/user-attachments/assets/43aa9329-8379-4725-9bbb-bc5f0eb8392b" />
 
 ## Academic Project
 
