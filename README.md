@@ -2,7 +2,7 @@
 
 A comprehensive online pharmacy e-commerce platform built with Django for BIM 6th Semester Project.
 
-## 🌟 Features
+##  Features
 
 ### Customer Features
 - Browse and search medicines by category
