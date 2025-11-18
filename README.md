@@ -1,32 +1,32 @@
-# 💊 Pharmazone - Online Pharmacy E-Commerce Platform
+# Pharmazone - Online Pharmacy E-Commerce Platform
 
 A comprehensive online pharmacy e-commerce platform built with Django for BIM 6th Semester Project.
 
 ## 🌟 Features
 
 ### Customer Features
-- 🛒 Browse and search medicines by category
-- 🛍️ Shopping cart functionality
-- 💳 Multiple payment methods (Cash on Delivery & eSewa)
-- 📋 Prescription upload for prescription medicines
-- 📍 Save multiple delivery addresses
-- 📦 Order tracking and history
-- ❌ Order cancellation
-- 💰 Refund requests
+- Browse and search medicines by category
+- Shopping cart functionality
+- Multiple payment methods (Cash on Delivery & eSewa)
+- Prescription upload for prescription medicines
+- Save multiple delivery addresses
+- Order tracking and history
+- Order cancellation
+- Refund requests
 
 ### Admin Features
-- 👨‍💼 Complete order management
-- 📊 Dashboard for order statistics
-- ✅ Prescription review and approval
-- 🔄 Order status updates
-- 💵 Refund processing
+- Complete order management
+- Dashboard for order statistics
+- Prescription review and approval
+- Order status updates
+- Refund processing
 
 ### Design Features
-- 🎨 Modern, attractive UI with smooth animations
-- 📱 Fully responsive design
-- 🎭 Interactive hover effects
-- ⬆️ Back-to-top button
-- 🌈 Gradient colors and professional styling
+- Modern, attractive UI with smooth animations
+- Fully responsive design
+-  Interactive hover effects
+- Back-to-top button
+- Gradient colors and professional styling
 
 ## 🛠️ Technologies Used
 
@@ -41,7 +41,7 @@ A comprehensive online pharmacy e-commerce platform built with Django for BIM 6t
 - Python 3.8 or higher
 - pip (Python package manager)
 
-## 🚀 Installation
+## Installation
 
 1. **Clone the repository**
 ```bash
@@ -99,28 +99,28 @@ pharmazone/
 └── pharmazone/      # Main project settings
 ```
 
-## 💳 Payment Methods
+##  Payment Methods
 
 - **Cash on Delivery (COD)** - Pay when you receive your order
 - **eSewa** - Online payment through eSewa wallet (Demo mode)
 
-## 🌍 Localization
+## Localization
 
 - Currency: Nepali Rupees (Rs.)
 - Country: Nepal
 - Free delivery on orders above Rs. 2000
 
-## 👥 User Roles
+## User Roles
 
 1. **Admin** - Full access to manage the platform
 2. **Pharmacy** - Manage orders and prescriptions
 3. **Customer** - Browse and purchase medicines
 
-## 📸 Screenshots
+## Screenshots
 
 (Add screenshots of your application here)
 
-## 🎓 Academic Project
+## Academic Project
 
 This project was developed as part of BIM 6th Semester coursework.
 
@@ -132,14 +132,14 @@ This project was developed as part of BIM 6th Semester coursework.
 
 This project is open source and available for educational purposes.
 
-## 🤝 Contributing
+## Contributing
 
 This is an academic project, but suggestions and improvements are welcome!
 
-## 📞 Contact
+## Contact
 
 For any queries, please contact:
-- Email: info@pharmazone.com
+- Email: 022bim055@sxc.edu.np
 - Phone: +977 9762607501
 
 ---
