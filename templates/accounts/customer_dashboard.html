@@ -1,0 +1,139 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Customer Dashboard - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Customer Dashboard</h2>
+            <p class="text-muted">Welcome back, {{ user.first_name }}!</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-box fa-2x text-primary mb-2"></i>
+                    <h5>Total Orders</h5>
+                    <h3>{{ user.orders.count }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-shopping-cart fa-2x text-info mb-2"></i>
+                    <h5>Cart Items</h5>
+                    <h3 id="cartCount">0</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-map-marker-alt fa-2x text-success mb-2"></i>
+                    <h5>Addresses</h5>
+                    <h3>{{ user.shipping_addresses.count }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-user-check fa-2x text-warning mb-2"></i>
+                    <h5>Status</h5>
+                    {% if user.is_verified %}
+                        <span class="badge bg-success">Verified</span>
+                    {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'products:medicine_list' %}" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag"></i> Shop Medicines
+                        </a>
+                        <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list"></i> My Orders
+                        </a>
+                        <a href="{% url 'cart:cart' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-shopping-cart"></i> Shopping Cart
+                        </a>
+                        <a href="{% url 'orders:shipping_addresses' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-map-marker-alt"></i> Manage Addresses
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Orders</h5>
+                </div>
+                <div class="card-body">
+                    {% if user.orders.all %}
+                        {% for order in user.orders.all|slice:":3" %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>{{ order.order_number }}</strong>
+                                    <br><small class="text-muted">{{ order.created_at|date:"M d, Y" }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge 
+                                        {% if order.status == 'pending' %}bg-warning
+                                        {% elif order.status == 'confirmed' %}bg-info
+                                        {% elif order.status == 'shipped' %}bg-primary
+                                        {% elif order.status == 'delivered' %}bg-success
+                                        {% elif order.status == 'cancelled' %}bg-danger
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ order.get_status_display }}
+                                    </span>
+                                    <br><small>Rs. {{ order.total_amount }}</small>
+                                </div>
+                            </div>
+                            {% if not forloop.last %}<hr>{% endif %}
+                        {% endfor %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'orders:order_list' %}" class="btn btn-sm btn-outline-primary">View All Orders</a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">No orders yet</p>
+                        <div class="text-center">
+                            <a href="{% url 'products:medicine_list' %}" class="btn btn-primary">Start Shopping</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update cart count
+$(document).ready(function() {
+    $.get('{% url "cart:cart_count" %}')
+        .done(function(data) {
+            $('#cartCount').text(data.count);
+        });
+});
+</script>
+{% endblock %}
+
+

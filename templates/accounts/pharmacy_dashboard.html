@@ -1,0 +1,106 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Pharmacy Dashboard - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Pharmacy Dashboard</h2>
+            <p class="text-muted">Welcome, {{ pharmacy_profile.pharmacy_name }}!</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-box fa-2x text-primary mb-2"></i>
+                    <h5>Total Orders</h5>
+                    <h3>{{ pharmacy_profile.total_orders }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                    <h5>Rating</h5>
+                    <h3>{{ pharmacy_profile.rating|floatformat:1 }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <h5>Status</h5>
+                    {% if pharmacy_profile.is_approved %}
+                        <span class="badge bg-success">Approved</span>
+                    {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-id-card fa-2x text-info mb-2"></i>
+                    <h5>License</h5>
+                    <small>{{ pharmacy_profile.license_number }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'orders:admin_order_list' %}" class="btn btn-primary">
+                            <i class="fas fa-list"></i> Manage Orders
+                        </a>
+                        <a href="/admin/" class="btn btn-outline-primary">
+                            <i class="fas fa-cog"></i> Admin Panel
+                        </a>
+                        <a href="{% url 'accounts:update_profile' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Update Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Pharmacy Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ pharmacy_profile.pharmacy_name }}</p>
+                    <p><strong>License:</strong> {{ pharmacy_profile.license_number }}</p>
+                    {% if pharmacy_profile.gst_number %}
+                        <p><strong>GST:</strong> {{ pharmacy_profile.gst_number }}</p>
+                    {% endif %}
+                    {% if pharmacy_profile.description %}
+                        <p><strong>Description:</strong> {{ pharmacy_profile.description }}</p>
+                    {% endif %}
+                    {% if pharmacy_profile.website %}
+                        <p><strong>Website:</strong> <a href="{{ pharmacy_profile.website }}" target="_blank">{{ pharmacy_profile.website }}</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

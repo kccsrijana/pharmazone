@@ -1,0 +1,135 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Payment - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-credit-card"></i> Payment</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Order Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Order Number:</h6>
+                            <p>{{ order.order_number }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Total Amount:</h6>
+                            <h4 class="text-primary">Rs. {{ order.total_amount }}</h4>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Gateway Info -->
+                    <div class="mb-4">
+                        <h5>
+                            {% if payment_method == 'esewa' %}
+                                <i class="fas fa-wallet"></i> eSewa Payment
+                            {% endif %}
+                        </h5>
+                    </div>
+                    
+
+                    
+                    <!-- Payment Form -->
+                    {% if payment_method == 'esewa' %}
+                    <form id="paymentForm" method="post" action="{% url 'payments:confirm_payment' payment.id %}">
+                        {% csrf_token %}
+                        <div class="text-center mb-4">
+                            <h3 style="color: #60bb46;">eSewa</h3>
+                            <p class="text-muted">Nepal's Digital Wallet</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">eSewa ID (Mobile/Email)</label>
+                            <input type="text" name="esewa_id" class="form-control" placeholder="98XXXXXXXX or email@example.com" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="esewa_password" class="form-control" placeholder="Enter your eSewa password" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">MPIN (4 digits)</label>
+                            <input type="password" name="esewa_mpin" class="form-control" placeholder="Enter 4-digit MPIN" maxlength="4" required>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-lg" style="background-color: #60bb46; color: white;">
+                                <i class="fas fa-lock"></i> Pay Rs. {{ order.total_amount }} with eSewa
+                            </button>
+                        </div>
+                    </form>
+                    
+                    {% endif %}
+                    
+                    <!-- Security Notice -->
+                    <div class="mt-4">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <i class="fas fa-shield-alt text-success"></i>
+                                <small class="d-block">SSL Secured</small>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <i class="fas fa-lock text-success"></i>
+                                <small class="d-block">256-bit Encryption</small>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <i class="fas fa-check-circle text-success"></i>
+                                <small class="d-block">PCI Compliant</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-method {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.payment-method:hover {
+    border-color: #0d6efd;
+    transform: translateY(-2px);
+}
+
+.payment-method.selected {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    const paymentMethodInput = document.getElementById('paymentMethod');
+    
+    paymentMethods.forEach(method => {
+        method.addEventListener('click', function() {
+            // Remove selected class from all methods
+            paymentMethods.forEach(m => m.classList.remove('selected'));
+            
+            // Add selected class to clicked method
+            this.classList.add('selected');
+            
+            // Update hidden input
+            paymentMethodInput.value = this.dataset.method;
+        });
+    });
+    
+    // Select first payment method by default
+    if (paymentMethods.length > 0) {
+        paymentMethods[0].click();
+    }
+});
+</script>
+{% endblock %}

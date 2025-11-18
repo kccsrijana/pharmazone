@@ -1,0 +1,305 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Checkout - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Checkout</h2>
+            
+            <!-- Form Errors -->
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Please correct the following errors:</strong>
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            <!-- Prescription Notice -->
+            {% if requires_prescription %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Prescription Required:</strong> Some items in your cart require a valid prescription.
+                    Please upload your prescription below.
+                </div>
+            {% endif %}
+            
+            <!-- Order Summary -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                        <div class="row align-items-center mb-3">
+                            <div class="col-md-6">
+                                <h6>{{ item.medicine.name }}</h6>
+                                {% if item.medicine.strength %}
+                                    <small class="text-muted">{{ item.medicine.strength }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-2">
+                                <span>Qty: {{ item.quantity }}</span>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <strong>Rs. {{ item.total_price }}</strong>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Subtotal:</strong>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <strong>Rs. {{ subtotal }}</strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            Delivery Price:
+                        </div>
+                        <div class="col-md-6 text-end">
+                            {% if shipping_cost == 0 %}
+                                <span class="text-success">FREE</span>
+                            {% else %}
+                                Rs. {{ shipping_cost|floatformat:2 }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Total:</h5>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h5>Rs. {{ total_amount|floatformat:2 }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Checkout Form -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Delivery Address -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Delivery Address</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Saved Addresses -->
+                        {% if saved_addresses %}
+                        <div class="mb-4">
+                            <label class="form-label"><strong>Select Delivery Address:</strong></label>
+                            <div class="row">
+                                {% for address in saved_addresses %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card saved-address-card" style="cursor: pointer;" 
+                                         data-name="{{ address.name }}"
+                                         data-phone="{{ address.phone }}"
+                                         data-address="{{ address.address }}"
+                                         data-city="{{ address.city }}"
+                                         data-country="{{ address.country }}">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="saved_address" 
+                                                       id="address_{{ address.id }}" value="{{ address.id }}"
+                                                       {% if address.is_default %}checked{% endif %}>
+                                                <label class="form-check-label" for="address_{{ address.id }}">
+                                                    <strong>{{ address.name }}</strong>
+                                                    {% if address.is_default %}
+                                                        <span class="badge bg-primary">Default</span>
+                                                    {% endif %}
+                                                    <br><small>{{ address.address }}</small>
+                                                    <br><small>{{ address.city }}, {{ address.country }}</small>
+                                                    <br><small><i class="fas fa-phone"></i> {{ address.phone }}</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> 
+                                Need to add a new address? Go to <a href="{% url 'orders:shipping_addresses' %}" target="_blank">Delivery Addresses</a> page.
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden fields to store selected address -->
+                        <div style="display: none;">
+                            {{ form.shipping_name }}
+                            {{ form.shipping_phone }}
+                            {{ form.shipping_address }}
+                            {{ form.shipping_city }}
+                            {{ form.shipping_country }}
+                        </div>
+                        
+                        {% else %}
+                        <!-- Address Form (only shown if no saved addresses) -->
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            You don't have any saved addresses. Please fill in your delivery details below.
+                        </div>
+                        <div id="addressForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Full Name *</label>
+                                    {{ form.shipping_name }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Phone Number *</label>
+                                    {{ form.shipping_phone }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address *</label>
+                                {{ form.shipping_address }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">City *</label>
+                                {{ form.shipping_city }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Country</label>
+                                {{ form.shipping_country }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+
+                <!-- Prescription Upload (if required) -->
+                {% if requires_prescription %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-file-medical"></i> Upload Prescription *</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Prescription Image *</label>
+                            <input type="file" name="prescription_image" class="form-control" accept="image/*,.pdf" required>
+                            <small class="text-muted">Upload a clear image or PDF of your prescription</small>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Doctor's Name *</label>
+                                <input type="text" name="doctor_name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Doctor's License Number</label>
+                                <input type="text" name="doctor_license" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prescription Date *</label>
+                            <input type="date" name="prescription_date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea name="prescription_notes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Payment Method -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-credit-card"></i> Payment Method *</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod" checked>
+                            <label class="form-check-label" for="cod">
+                                <strong>Cash on Delivery</strong>
+                                <br><small class="text-muted">Pay when you receive your order</small>
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_method" id="esewa" value="esewa">
+                            <label class="form-check-label" for="esewa">
+                                <strong>eSewa</strong>
+                                <br><small class="text-muted">Pay online using eSewa wallet</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Notes -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Order Notes (Optional)</h5>
+                    </div>
+                    <div class="card-body">
+                        {{ form.notes }}
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-shopping-bag"></i> Place Order
+                </button>
+            </form>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Security Notice -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-shield-alt"></i> Security</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> SSL Encrypted</li>
+                        <li><i class="fas fa-check text-success"></i> Secure Payment</li>
+                        <li><i class="fas fa-check text-success"></i> Privacy Protected</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle saved address selection
+    const addressCards = document.querySelectorAll('.saved-address-card');
+    
+    addressCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Check the radio button
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Fill the hidden form fields with selected address data
+            document.querySelector('[name="shipping_name"]').value = this.dataset.name;
+            document.querySelector('[name="shipping_phone"]').value = this.dataset.phone;
+            document.querySelector('[name="shipping_address"]').value = this.dataset.address;
+            document.querySelector('[name="shipping_city"]').value = this.dataset.city;
+            document.querySelector('[name="shipping_country"]').value = this.dataset.country;
+            
+            // Highlight selected card
+            addressCards.forEach(c => c.classList.remove('border-primary'));
+            this.classList.add('border-primary');
+        });
+    });
+    
+    // Auto-select default address on page load
+    const defaultAddress = document.querySelector('[name="saved_address"]:checked');
+    if (defaultAddress) {
+        defaultAddress.closest('.saved-address-card').click();
+    }
+});
+</script>
+{% endblock %}

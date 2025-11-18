@@ -1,0 +1,302 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ medicine.name }} - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Medicine Image -->
+            <div class="card">
+                <div class="card-body text-center p-3">
+                    {% if medicine.image %}
+                        <img src="{{ medicine.image.url }}" class="img-fluid rounded" alt="{{ medicine.name }}" 
+                             style="max-height: 400px; width: 100%; object-fit: contain; background: #f8f9fa;">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                            <i class="fas fa-pills fa-5x text-muted"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <h2>{{ medicine.name }}</h2>
+            {% if medicine.generic_name %}
+                <p class="text-muted">Generic: {{ medicine.generic_name }}</p>
+            {% endif %}
+            
+            <!-- Price -->
+            <div class="mb-3">
+                {% if medicine.discount_price %}
+                    <h3 class="text-danger">Rs. {{ medicine.discount_price }}</h3>
+                    <h5 class="text-muted text-decoration-line-through">Rs. {{ medicine.price }}</h5>
+                    <span class="badge bg-success">Save {{ medicine.discount_percentage }}%</span>
+                {% else %}
+                    <h3 class="text-primary">Rs. {{ medicine.price }}</h3>
+                {% endif %}
+            </div>
+            
+            <!-- Medicine Details -->
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-6">
+                        <strong>Category:</strong> {{ medicine.category.name }}
+                    </div>
+                    <div class="col-6">
+                        <strong>Manufacturer:</strong> {{ medicine.manufacturer.name }}
+                    </div>
+                </div>
+            </div>
+            
+            {% if medicine.strength %}
+                <div class="mb-3">
+                    <strong>Strength:</strong> {{ medicine.strength }}
+                </div>
+            {% endif %}
+            
+            {% if medicine.dosage_form %}
+                <div class="mb-3">
+                    <strong>Dosage Form:</strong> {{ medicine.dosage_form }}
+                </div>
+            {% endif %}
+            
+            {% if medicine.pack_size %}
+                <div class="mb-3">
+                    <strong>Pack Size:</strong> {{ medicine.pack_size }}
+                </div>
+            {% endif %}
+            
+            <!-- Prescription Notice -->
+            {% if medicine.requires_prescription %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Prescription Required:</strong> This medicine requires a valid prescription from a doctor.
+                </div>
+            {% endif %}
+            
+            <!-- Stock Status -->
+            <div class="mb-3">
+                {% if medicine.is_in_stock %}
+                    <span class="badge bg-success">
+                        <i class="fas fa-check"></i> In Stock ({{ medicine.stock_quantity }} available)
+                    </span>
+                {% else %}
+                    <span class="badge bg-danger">
+                        <i class="fas fa-times"></i> Out of Stock
+                    </span>
+                {% endif %}
+            </div>
+            
+            <!-- Add to Cart -->
+            {% if medicine.is_in_stock %}
+                <form method="post" action="{% url 'cart:add_to_cart' medicine.id %}" class="mb-3">
+                    {% csrf_token %}
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label">Quantity:</label>
+                            <input type="number" name="quantity" value="{{ medicine.min_order_quantity }}" 
+                                   min="{{ medicine.min_order_quantity }}" 
+                                   max="{{ medicine.max_order_quantity }}" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-8">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
+            
+            <!-- Description -->
+            {% if medicine.description %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Description</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ medicine.description }}</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Medicine Information Tabs -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="medicineTabs" role="tablist">
+                {% if medicine.composition %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="composition-tab" data-bs-toggle="tab" data-bs-target="#composition" type="button">
+                            Composition
+                        </button>
+                    </li>
+                {% endif %}
+                {% if medicine.indications %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="indications-tab" data-bs-toggle="tab" data-bs-target="#indications" type="button">
+                            Indications
+                        </button>
+                    </li>
+                {% endif %}
+                {% if medicine.contraindications %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="contraindications-tab" data-bs-toggle="tab" data-bs-target="#contraindications" type="button">
+                            Contraindications
+                        </button>
+                    </li>
+                {% endif %}
+                {% if medicine.side_effects %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="sideeffects-tab" data-bs-toggle="tab" data-bs-target="#sideeffects" type="button">
+                            Side Effects
+                        </button>
+                    </li>
+                {% endif %}
+                {% if reviews %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button">
+                            Reviews ({{ reviews.count }})
+                        </button>
+                    </li>
+                {% endif %}
+            </ul>
+            
+            <div class="tab-content" id="medicineTabsContent">
+                {% if medicine.composition %}
+                    <div class="tab-pane fade show active" id="composition" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <p>{{ medicine.composition }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% if medicine.indications %}
+                    <div class="tab-pane fade" id="indications" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <p>{{ medicine.indications }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% if medicine.contraindications %}
+                    <div class="tab-pane fade" id="contraindications" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <p>{{ medicine.contraindications }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% if medicine.side_effects %}
+                    <div class="tab-pane fade" id="sideeffects" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <p>{{ medicine.side_effects }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% if reviews %}
+                    <div class="tab-pane fade" id="reviews" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <h5>Customer Reviews</h5>
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-2">Average Rating:</span>
+                                            <div class="text-warning">
+                                                {% for i in "12345" %}
+                                                    {% if forloop.counter <= avg_rating %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            <span class="ms-2">({{ avg_rating|floatformat:1 }})</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        {% if user.is_authenticated and not user_review %}
+                                            <a href="{% url 'products:add_review' medicine.id %}" class="btn btn-primary">
+                                                Write a Review
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                {% for review in reviews %}
+                                    <div class="border-bottom pb-3 mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <h6>{{ review.user.username }}</h6>
+                                            <div class="text-warning">
+                                                {% for i in "12345" %}
+                                                    {% if forloop.counter <= review.rating %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <h6>{{ review.title }}</h6>
+                                        <p>{{ review.comment }}</p>
+                                        <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Medicines -->
+    {% if related_medicines %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <h4>Related Medicines</h4>
+                <div class="row">
+                    {% for related in related_medicines %}
+                        <div class="col-md-3 mb-3">
+                            <div class="card">
+                                {% if related.image %}
+                                    <img src="{{ related.image.url }}" class="card-img-top" alt="{{ related.name }}" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="fas fa-pills fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ related.name }}</h6>
+                                    {% if related.strength %}
+                                        <p class="card-text text-muted small">{{ related.strength }}</p>
+                                    {% endif %}
+                                    <p class="card-text">
+                                        <strong>Rs. {{ related.current_price }}</strong>
+                                    </p>
+                                    <a href="{% url 'products:medicine_detail' slug=related.slug %}" class="btn btn-primary btn-sm">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Pharmazone - Online Medicine Store{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+            color: #2c5aa0 !important;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+        }
+        .medicine-card {
+            transition: transform 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .medicine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .price {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .discount-price {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        .search-suggestion {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .search-suggestion:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Smooth animations */
+        * {
+            transition: all 0.3s ease;
+        }
+        
+        /* Navbar enhancement */
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Button hover effects */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Card hover effects */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        /* Badge pulse animation */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .badge {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Image zoom on hover */
+        .medicine-card img {
+            transition: transform 0.5s ease;
+        }
+        
+        .medicine-card:hover img {
+            transform: scale(1.1);
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Success checkmark animation */
+        @keyframes checkmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .success-icon {
+            animation: checkmark 0.5s ease;
+        }
+        
+        /* Floating effect */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Progress bar */
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'products:home' %}">
+                <i class="fas fa-pills"></i> Pharmazone
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'products:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'products:medicine_list' %}">Medicines</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'products:category_list' %}">Categories</a>
+                    </li>
+                </ul>
+                
+                <!-- Search Box -->
+                <form class="d-flex me-3 search-box" method="GET" action="{% url 'products:medicine_list' %}">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Search medicines..." 
+                           value="{{ request.GET.search }}" id="searchInput">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                </form>
+                
+                <!-- User Menu -->
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cart:cart' %}">
+                                <i class="fas fa-shopping-cart"></i> Cart 
+                                <span class="badge bg-primary" id="cartCount">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'orders:order_list' %}">
+                                <i class="fas fa-box"></i> Orders
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="/admin/">Admin Panel</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">Manage Orders</a></li>
+                                {% elif user.user_type == 'pharmacy' %}
+                                    <li><a class="dropdown-item" href="{% url 'accounts:pharmacy_dashboard' %}">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">Manage Orders</a></li>
+                                {% elif user.user_type == 'customer' %}
+                                    <li><a class="dropdown-item" href="{% url 'accounts:customer_dashboard' %}">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'orders:shipping_addresses' %}">Delivery Addresses</a></li>
+                                {% endif %}
+                                {% if user.is_staff or user.user_type == 'pharmacy' or user.user_type == 'customer' %}
+                                    <li><hr class="dropdown-divider"></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="btn btn-primary" style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 1000; border-radius: 50%; width: 50px; height: 50px;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-pills"></i> Pharmazone</h5>
+                    <p>Your trusted online pharmacy for quality medicines and healthcare products.</p>
+                    <div class="mt-3">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-2x"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-instagram fa-2x"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'products:home' %}" class="text-light"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="{% url 'products:medicine_list' %}" class="text-light"><i class="fas fa-chevron-right"></i> Medicines</a></li>
+                        <li><a href="{% url 'products:category_list' %}" class="text-light"><i class="fas fa-chevron-right"></i> Categories</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <p><i class="fas fa-phone"></i> +977 9762607501</p>
+                    <p><i class="fas fa-envelope"></i> info@pharmazone.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Kathmandu, Nepal</p>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2025 Pharmazone. All rights reserved. Made with <i class="fas fa-heart text-danger"></i> in Nepal</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        // Search suggestions
+        $(document).ready(function() {
+            let searchTimeout;
+            
+            $('#searchInput').on('input', function() {
+                const query = $(this).val();
+                const suggestions = $('#searchSuggestions');
+                
+                clearTimeout(searchTimeout);
+                
+                if (query.length >= 2) {
+                    searchTimeout = setTimeout(function() {
+                        $.get('{% url "products:search_suggestions" %}', {q: query})
+                            .done(function(data) {
+                                if (data.suggestions.length > 0) {
+                                    let html = '';
+                                    data.suggestions.forEach(function(item) {
+                                        html += '<div class="search-suggestion" data-slug="' + item.slug + '">';
+                                        html += '<strong>' + item.name + '</strong>';
+                                        if (item.strength) {
+                                            html += ' (' + item.strength + ')';
+                                        }
+                                        html += '<br><small class="text-muted">Rs. ' + item.price + '</small>';
+                                        html += '</div>';
+                                    });
+                                    suggestions.html(html).show();
+                                } else {
+                                    suggestions.hide();
+                                }
+                            });
+                    }, 300);
+                } else {
+                    suggestions.hide();
+                }
+            });
+            
+            // Handle suggestion click
+            $(document).on('click', '.search-suggestion', function() {
+                const slug = $(this).data('slug');
+                window.location.href = '/medicine/' + slug + '/';
+            });
+            
+            // Hide suggestions when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.search-box').length) {
+                    $('#searchSuggestions').hide();
+                }
+            });
+            
+            // Update cart count
+            function updateCartCount() {
+                {% if user.is_authenticated %}
+                    $.get('{% url "cart:cart_count" %}')
+                        .done(function(data) {
+                            $('#cartCount').text(data.count);
+                        });
+                {% endif %}
+            }
+            
+            updateCartCount();
+            
+            // Update cart count every 30 seconds
+            setInterval(updateCartCount, 30000);
+            
+            // Back to Top button
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.style.display = 'block';
+                } else {
+                    backToTopBtn.style.display = 'none';
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Add loading animation to buttons
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn && !submitBtn.disabled) {
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+                        submitBtn.disabled = true;
+                    }
+                });
+            });
+            
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.card, .medicine-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                observer.observe(el);
+            });
+            
+            // Add ripple effect to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+        });
+    </script>
+    
+    <style>
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,93 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Profile - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>My Profile</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Personal Information</h6>
+                            <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                            <p><strong>Username:</strong> {{ user.username }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>Phone:</strong> {{ user.phone_number }}</p>
+                            <p><strong>User Type:</strong> {{ user.get_user_type_display }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Address Information</h6>
+                            <p><strong>Address:</strong> {{ user.address|default:"Not provided" }}</p>
+                            <p><strong>City:</strong> {{ user.city|default:"Not provided" }}</p>
+                            <p><strong>State:</strong> {{ user.state|default:"Not provided" }}</p>
+                            <p><strong>Postal Code:</strong> {{ user.postal_code|default:"Not provided" }}</p>
+                            <p><strong>Country:</strong> {{ user.country }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if profile %}
+                        <hr>
+                        <h6>Additional Information</h6>
+                        {% if user.user_type == 'pharmacy' %}
+                            <p><strong>Pharmacy Name:</strong> {{ profile.pharmacy_name }}</p>
+                            <p><strong>License Number:</strong> {{ profile.license_number }}</p>
+                            <p><strong>GST Number:</strong> {{ profile.gst_number|default:"Not provided" }}</p>
+                            <p><strong>Approved:</strong> 
+                                {% if profile.is_approved %}
+                                    <span class="badge bg-success">Yes</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                            </p>
+                        {% elif user.user_type == 'customer' %}
+                            <p><strong>Emergency Contact:</strong> {{ profile.emergency_contact|default:"Not provided" }}</p>
+                            <p><strong>Medical Conditions:</strong> {{ profile.medical_conditions|default:"None reported" }}</p>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <div class="mt-3">
+                        <a href="{% url 'accounts:update_profile' %}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Update Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-box"></i> My Orders
+                        </a>
+                        <a href="{% url 'cart:cart' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-shopping-cart"></i> Shopping Cart
+                        </a>
+                        {% if user.user_type == 'customer' %}
+                            <a href="{% url 'orders:shipping_addresses' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-map-marker-alt"></i> Addresses
+                            </a>
+                        {% endif %}
+                        {% if user.user_type == 'pharmacy' %}
+                            <a href="{% url 'accounts:pharmacy_dashboard' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

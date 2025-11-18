@@ -1,0 +1,113 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Update Profile - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Update Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <h5>Personal Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name</label>
+                                {{ user_form.first_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name</label>
+                                {{ user_form.last_name }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                {{ user_form.email }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone Number</label>
+                                {{ user_form.phone_number }}
+                            </div>
+                        </div>
+                        
+                        <h5 class="mt-4">Address Information</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            {{ user_form.address }}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">City</label>
+                                {{ user_form.city }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">State</label>
+                                {{ user_form.state }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Postal Code</label>
+                                {{ user_form.postal_code }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Country</label>
+                            {{ user_form.country }}
+                        </div>
+                        
+                        {% if profile_form %}
+                            <h5 class="mt-4">Additional Information</h5>
+                            {% if user.user_type == 'pharmacy' %}
+                                <div class="mb-3">
+                                    <label class="form-label">Pharmacy Name</label>
+                                    {{ profile_form.pharmacy_name }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">License Number</label>
+                                    {{ profile_form.license_number }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">GST Number</label>
+                                    {{ profile_form.gst_number }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    {{ profile_form.description }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Website</label>
+                                    {{ profile_form.website }}
+                                </div>
+                            {% elif user.user_type == 'customer' %}
+                                <div class="mb-3">
+                                    <label class="form-label">Emergency Contact</label>
+                                    {{ profile_form.emergency_contact }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Medical Conditions</label>
+                                    {{ profile_form.medical_conditions }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
