@@ -36,7 +36,7 @@ A comprehensive online pharmacy e-commerce platform built with Django for BIM 6t
 - **Icons:** Font Awesome 6.0
 - **Animations:** Animate.css
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.8 or higher
 - pip (Python package manager)
@@ -84,7 +84,7 @@ python manage.py runserver
 - Main site: http://127.0.0.1:8000/
 - Admin panel: http://127.0.0.1:8000/admin/
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 pharmazone/
@@ -128,7 +128,7 @@ This project was developed as part of BIM 6th Semester coursework.
 **Institution:** [Your College Name]  
 **Year:** 2025
 
-## 📄 License
+## License
 
 This project is open source and available for educational purposes.
 
