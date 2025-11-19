@@ -139,7 +139,6 @@ This is an academic project, but suggestions and improvements are welcome!
 
 For any queries, please contact:
 - Email: 022bim055@sxc.edu.np
-- Phone: +977 9762607501
 
 ---
 
