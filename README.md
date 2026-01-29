@@ -1,34 +1,34 @@
-# 💊 Pharmazone - Online Pharmacy E-Commerce Platform
+<img width="1440" height="819" alt="Screenshot 2025-11-18 at 11 20 52" src="https://github.com/user-attachments/assets/311156fa-c3a7-473f-83c1-421b2900bf33" /># Pharmazone - Online Pharmacy E-Commerce Platform
 
 A comprehensive online pharmacy e-commerce platform built with Django for BIM 6th Semester Project.
 
-## 🌟 Features
+##  Features
 
 ### Customer Features
-- 🛒 Browse and search medicines by category
-- 🛍️ Shopping cart functionality
-- 💳 Multiple payment methods (Cash on Delivery & eSewa)
-- 📋 Prescription upload for prescription medicines
-- 📍 Save multiple delivery addresses
-- 📦 Order tracking and history
-- ❌ Order cancellation
-- 💰 Refund requests
+- Browse and search medicines by category
+- Shopping cart functionality
+- Multiple payment methods (Cash on Delivery & eSewa)
+- Prescription upload for prescription medicines
+- Save multiple delivery addresses
+- Order tracking and history
+- Order cancellation
+- Refund requests
 
 ### Admin Features
-- 👨‍💼 Complete order management
-- 📊 Dashboard for order statistics
-- ✅ Prescription review and approval
-- 🔄 Order status updates
-- 💵 Refund processing
+- Complete order management
+- Dashboard for order statistics
+- Prescription review and approval
+- Order status updates
+- Refund processing
 
 ### Design Features
-- 🎨 Modern, attractive UI with smooth animations
-- 📱 Fully responsive design
-- 🎭 Interactive hover effects
-- ⬆️ Back-to-top button
-- 🌈 Gradient colors and professional styling
+- Modern, attractive UI with smooth animations
+- Fully responsive design
+-  Interactive hover effects
+- Back-to-top button
+- Gradient colors and professional styling
 
-## 🛠️ Technologies Used
+##  Technologies Used
 
 - **Backend:** Django 5.2.7
 - **Frontend:** HTML5, CSS3, Bootstrap 5.3
@@ -36,12 +36,12 @@ A comprehensive online pharmacy e-commerce platform built with Django for BIM 6t
 - **Icons:** Font Awesome 6.0
 - **Animations:** Animate.css
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.8 or higher
 - pip (Python package manager)
 
-## 🚀 Installation
+## Installation
 
 1. **Clone the repository**
 ```bash
@@ -84,7 +84,7 @@ python manage.py runserver
 - Main site: http://127.0.0.1:8000/
 - Admin panel: http://127.0.0.1:8000/admin/
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 pharmazone/
@@ -99,48 +99,46 @@ pharmazone/
 └── pharmazone/      # Main project settings
 ```
 
-## 💳 Payment Methods
+##  Payment Methods
 
 - **Cash on Delivery (COD)** - Pay when you receive your order
 - **eSewa** - Online payment through eSewa wallet (Demo mode)
 
-## 🌍 Localization
+## Localization
 
 - Currency: Nepali Rupees (Rs.)
 - Country: Nepal
 - Free delivery on orders above Rs. 2000
 
-## 👥 User Roles
+## User Roles
 
 1. **Admin** - Full access to manage the platform
 2. **Pharmacy** - Manage orders and prescriptions
 3. **Customer** - Browse and purchase medicines
 
-## 📸 Screenshots
+## Screenshots
+<img width="1440" height="819" alt="Screenshot 2025-11-18 at 11 23 11" src="https://github.com/user-attachments/assets/43aa9329-8379-4725-9bbb-bc5f0eb8392b" />
 
-(Add screenshots of your application here)
-
-## 🎓 Academic Project
+## Academic Project
 
 This project was developed as part of BIM 6th Semester coursework.
 
-**Developed by:** [Your Name]  
-**Institution:** [Your College Name]  
+**Developed by:** Srijana Khatri
+**Institution:** St.Xavier's College, Maitighar
 **Year:** 2025
 
-## 📄 License
+## License
 
 This project is open source and available for educational purposes.
 
-## 🤝 Contributing
+## Contributing
 
 This is an academic project, but suggestions and improvements are welcome!
 
-## 📞 Contact
+## Contact
 
 For any queries, please contact:
-- Email: info@pharmazone.com.np
-- Phone: +977-1-4567890
+- Email: 022bim055@sxc.edu.np
 
 ---
 
