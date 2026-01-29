@@ -38,9 +38,21 @@ def order_detail(request, order_id):
     return render(request, 'orders/order_detail.html', context)
 
 
+def is_secure_admin(user):
+    """Check if user is a secure admin"""
+    return (user.is_authenticated and 
+            user.is_staff and 
+            user.username == 'admin')
+
+
 @login_required
 def checkout(request):
     """Checkout process"""
+    # Prevent admin users from accessing checkout
+    if is_secure_admin(request.user):
+        messages.error(request, 'Admin users cannot place orders.')
+        return redirect('doctor_appointments:admin_dashboard')
+    
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = cart.items.all()
     
@@ -158,6 +170,14 @@ def checkout(request):
                     
                     # Clear cart
                     cart.items.all().delete()
+                    
+                    # Send notifications
+                    from notifications.services import NotificationService
+                    NotificationService.notify_new_order(order)
+                    
+                    # Check if it's a prescription order
+                    if requires_prescription:
+                        NotificationService.notify_prescription_order(order)
                     
                     # Handle payment based on method
                     if payment_method == 'cod':
@@ -343,9 +363,9 @@ def set_default_address(request, address_id):
 @login_required
 def admin_order_list(request):
     """Admin view for all orders"""
-    if not request.user.is_staff:
+    if not is_secure_admin(request.user):
         messages.error(request, 'Access denied.')
-        return redirect('home')
+        return redirect('products:home')
     
     orders = Order.objects.all().order_by('-created_at')
     
@@ -365,9 +385,9 @@ def admin_order_list(request):
 @login_required
 def admin_order_detail(request, order_id):
     """Admin view for order details"""
-    if not request.user.is_staff:
+    if not is_secure_admin(request.user):
         messages.error(request, 'Access denied.')
-        return redirect('home')
+        return redirect('products:home')
     
     order = get_object_or_404(Order, id=order_id)
     

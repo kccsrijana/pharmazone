@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hero Section Animation Options - Pharmazone</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+        }
+        .option-container {
+            margin-bottom: 40px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .option-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .hero-demo {
+            height: 400px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+        }
+        
+        /* Animation Styles */
+        
+        /* Option 1: Typewriter Effect */
+        .typewriter h1 {
+            overflow: hidden;
+            border-right: .15em solid orange;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: orange; }
+        }
+        
+        /* Option 2: Glowing Pulse */
+        .glow-pulse h1 {
+            animation: glow 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 20px rgba(255,255,255,0.8);
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 30px rgba(102,126,234,0.8); }
+            to { text-shadow: 0 0 30px rgba(255,255,255,1), 0 0 40px rgba(102,126,234,1); }
+        }
+        
+        /* Option 3: Bounce In */
+        .bounce-in h1 {
+            animation: bounceInDown 2s ease-out;
+        }
+        .bounce-in p {
+            animation: bounceInUp 2s ease-out 0.5s both;
+        }
+        
+        /* Option 4: Slide & Fade */
+        .slide-fade h1 {
+            animation: slideInLeft 1.5s ease-out;
+        }
+        .slide-fade p {
+            animation: slideInRight 1.5s ease-out 0.3s both;
+        }
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Option 5: Rotating Words */
+        .rotating-words .word {
+            position: absolute;
+            opacity: 0;
+            animation: rotateWord 6s linear infinite;
+        }
+        .rotating-words .word:nth-child(1) { animation-delay: 0s; }
+        .rotating-words .word:nth-child(2) { animation-delay: 2s; }
+        .rotating-words .word:nth-child(3) { animation-delay: 4s; }
+        @keyframes rotateWord {
+            0%, 23% { opacity: 1; transform: translateY(0px); }
+            33%, 100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        /* Option 6: Floating Elements */
+        .floating-elements {
+            position: relative;
+        }
+        .floating-icon {
+            position: absolute;
+            animation: float 3s ease-in-out infinite;
+        }
+        .floating-icon:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 60%; right: 15%; animation-delay: 1s; }
+        .floating-icon:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 2s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .choose-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .choose-btn:hover {
+            transform: scale(1.05);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-5" style="color: #2c3e50;">🎬 Hero Section Animation Options</h1>
+        <p class="text-center text-muted mb-5">Choose your favorite animation style for "Your Health, Our Priority"</p>
+        
+        <!-- Option 1: Typewriter Effect -->
+        <div class="option-container">
+            <div class="option-header">
+                <h3>⌨️ Option 1: Typewriter Effect</h3>
+                <p>Classic typing animation with blinking cursor</p>
+            </div>
+            <div class="hero-demo typewriter" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold">Your Health, Our Priority</h1>
+                    <p class="lead mt-3">Professional healthcare at your fingertips</p>
+                </div>
+            </div>
+            <div class="text-center p-3">
+                <button class="choose-btn" onclick="selectOption(1)">Choose Typewriter Effect</button>
+            </div>
+        </div>
+
+        <!-- Option 2: Glowing Pulse -->
+        <div class="option-container">
+            <div class="option-header">
+                <h3>✨ Option 2: Glowing Pulse</h3>
+                <p>Elegant glow effect with pulsing animation</p>
+            </div>
+            <div class="hero-demo glow-pulse" style="background: linear-gradient(135deg, #2c3e50, #34495e);">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold">Your Health, Our Priority</h1>
+                    <p class="lead mt-3">Trusted healthcare solutions</p>
+                </div>
+            </div>
+            <div class="text-center p-3">
+                <button class="choose-btn" onclick="selectOption(2)">Choose Glowing Pulse</button>
+            </div>
+        </div>
+
+        <!-- Option 3: Bounce In -->
+        <div class="option-container">
+            <div class="option-header">
+                <h3>🎾 Option 3: Bounce In Animation</h3>
+                <p>Dynamic bounce effect from top and bottom</p>
+            </div>
+            <div class="hero-demo bounce-in" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold">Your Health, Our Priority</h1>
+                    <p class="lead mt-3">Quality medicines delivered fast</p>
+                </div>
+            </div>
+            <div class="text-center p-3">
+                <button class="choose-btn" onclick="selectOption(3)">Choose Bounce Animation</button>
+            </div>
+        </div>
+
+        <!-- Option 4: Slide & Fade -->
+        <div class="option-container">
+            <div class="option-header">
+                <h3>➡️ Option 4: Slide & Fade</h3>
+                <p>Smooth sliding animation from left and right</p>
+            </div>
+            <div class="hero-demo slide-fade" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold">Your Health, Our Priority</h1>
+                    <p class="lead mt-3">Nepal's trusted online pharmacy</p>
+                </div>
+            </div>
+            <div class="text-center p-3">
+                <button class="choose-btn" onclick="selectOption(4)">Choose Slide & Fade</button>
+            </div>
+        </div>
+
+        <!-- Option 5: Rotating Words -->
+        <div class="option-container">
+            <div class="option-header">
+                <h3>🔄 Option 5: Rotating Words</h3>
+                <p>Dynamic word rotation with multiple messages</p>
+            </div>
+            <div class="hero-demo" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold">
+                        Your 
+                        <span class="rotating-words" style="position: relative; display: inline-block; width: 200px;">
+                            <span class="word">Health,</span>
+                            <span class="word">Wellness,</span>
+                            <span class="word">Care,</span>
+                        </span>
+                        Our Priority
+                    </h1>
+                    <p class="lead mt-3">Comprehensive healthcare solutions</p>
+                </div>
+            </div>
+            <div class="text-center p-3">
+                <button class="choose-btn" onclick="selectOption(5)">Choose Rotating Words</button>
+            </div>
+        </div>
+
+        <!-- Option 6: Floating Elements -->
+        <div class="option-container">
+            <div class="option-header">
+                <h3>🎈 Option 6: Floating Elements</h3>
+                <p>Floating medical icons with smooth animations</p>
+            </div>
+            <div class="hero-demo floating-elements" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                <div class="floating-icon"><i class="fas fa-pills" style="font-size: 30px; color: rgba(255,255,255,0.6);"></i></div>
+                <div class="floating-icon"><i class="fas fa-heartbeat" style="font-size: 25px; color: rgba(255,255,255,0.6);"></i></div>
+                <div class="floating-icon"><i class="fas fa-stethoscope" style="font-size: 28px; color: rgba(255,255,255,0.6);"></i></div>
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold animate__animated animate__fadeInUp">Your Health, Our Priority</h1>
+                    <p class="lead mt-3 animate__animated animate__fadeInUp animate__delay-1s">Professional medical care</p>
+                </div>
+            </div>
+            <div class="text-center p-3">
+                <button class="choose-btn" onclick="selectOption(6)">Choose Floating Elements</button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="text-center mt-5 p-4" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px;">
+            <h3>📋 How to Apply Your Choice</h3>
+            <p>Select your favorite animation and I'll implement it on your home page immediately!</p>
+            <p><strong>Each option includes:</strong></p>
+            <ul style="list-style: none; padding: 0;">
+                <li>✅ Smooth animations</li>
+                <li>✅ Mobile responsive design</li>
+                <li>✅ Professional appearance</li>
+                <li>✅ Fast loading performance</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function selectOption(optionNumber) {
+            const options = {
+                1: "Typewriter Effect",
+                2: "Glowing Pulse", 
+                3: "Bounce Animation",
+                4: "Slide & Fade",
+                5: "Rotating Words",
+                6: "Floating Elements"
+            };
+            
+            alert(`Great choice! You selected "${options[optionNumber]}". Tell the developer to implement Option ${optionNumber}.`);
+        }
+
+        // Restart animations when scrolling into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const animatedElements = entry.target.querySelectorAll('[class*="animate__"]');
+                    animatedElements.forEach(el => {
+                        el.style.animation = 'none';
+                        el.offsetHeight; // Trigger reflow
+                        el.style.animation = null;
+                    });
+                }
+            });
+        });
+
+        document.querySelectorAll('.hero-demo').forEach(demo => {
+            observer.observe(demo);
+        });
+    </script>
+</body>
+</html>

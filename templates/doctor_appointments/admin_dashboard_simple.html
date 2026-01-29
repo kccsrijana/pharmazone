@@ -1,0 +1,82 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Admin Dashboard - Test{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Admin Dashboard - Simple Test</h1>
+    
+    <div class="alert alert-info">
+        <h4>Debug Information:</h4>
+        <p><strong>Today:</strong> {{ today|default:"NOT SET" }}</p>
+        <p><strong>Total Customers:</strong> {{ total_customers|default:"NOT SET" }}</p>
+        <p><strong>Today's Revenue:</strong> {{ todays_revenue|default:"NOT SET" }}</p>
+        <p><strong>Today's Orders:</strong> {{ todays_orders_count|default:"NOT SET" }}</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Total Customers</h5>
+                    <h2>{{ total_customers|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Today's Revenue</h5>
+                    <h2>Rs. {{ todays_revenue|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5>Today's Orders</h5>
+                    <h2>{{ todays_orders_count|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5>Total Appointments</h5>
+                    <h2>{{ todays_appointments.count|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if recent_orders %}
+    <div class="mt-4">
+        <h3>Recent Orders</h3>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.user.username }}</td>
+                        <td>Rs. {{ order.total_amount }}</td>
+                        <td>{{ order.get_status_display }}</td>
+                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

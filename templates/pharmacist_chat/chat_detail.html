@@ -1,0 +1,225 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Chat with Pharmacist - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Chat Header -->
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments text-primary"></i> 
+                            {{ chat.subject }}
+                        </h5>
+                        <small class="text-muted">{{ chat.get_category_display }} • Started {{ chat.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-{% if chat.status == 'open' %}warning{% elif chat.status == 'in_progress' %}info{% else %}success{% endif %}">
+                            {{ chat.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Messages -->
+            <div class="card mb-3">
+                <div class="card-body" style="height: 400px; overflow-y: auto;" id="chatMessages">
+                    {% for message in messages %}
+                    <div class="message mb-3 {% if message.is_from_pharmacist %}pharmacist-message{% else %}user-message{% endif %}">
+                        <div class="d-flex {% if message.is_from_pharmacist %}justify-content-start{% else %}justify-content-end{% endif %}">
+                            <div class="message-bubble {% if message.is_from_pharmacist %}bg-light{% else %}bg-primary text-white{% endif %}" style="max-width: 70%; padding: 10px 15px; border-radius: 15px;">
+                                <div class="message-content">
+                                    {{ message.message|linebreaks }}
+                                </div>
+                                <small class="message-time {% if message.is_from_pharmacist %}text-muted{% else %}text-white-50{% endif %}">
+                                    {% if message.is_from_pharmacist %}
+                                        <i class="fas fa-user-md"></i> Pharmacist
+                                    {% else %}
+                                        <i class="fas fa-user"></i> You
+                                    {% endif %}
+                                    • {{ message.created_at|date:"H:i" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted">
+                        <i class="fas fa-comment-slash fa-2x mb-2"></i>
+                        <p>No messages yet. Start the conversation!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Message Input -->
+            {% if chat.status != 'closed' %}
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-10">
+                                {{ form.message }}
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-paper-plane"></i> Send
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> This chat has been closed.
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Chat Info Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-info-circle"></i> Chat Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Category:</strong><br>
+                        <span class="text-muted">{{ chat.get_category_display }}</span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Status:</strong><br>
+                        <span class="badge bg-{% if chat.status == 'open' %}warning{% elif chat.status == 'in_progress' %}info{% else %}success{% endif %}">
+                            {{ chat.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Started:</strong><br>
+                        <span class="text-muted">{{ chat.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                    
+                    {% if chat.pharmacist %}
+                    <div class="mb-3">
+                        <strong>Pharmacist:</strong><br>
+                        <span class="text-muted">
+                            <i class="fas fa-user-md"></i> 
+                            {{ chat.pharmacist.get_full_name|default:chat.pharmacist.username }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if chat.status != 'closed' %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'pharmacist_chat:close_chat' chat.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to close this chat?')">
+                            <i class="fas fa-times"></i> Close Chat
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Quick Tips -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6><i class="fas fa-lightbulb text-warning"></i> Tips</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success"></i> Be specific about your symptoms</li>
+                        <li><i class="fas fa-check text-success"></i> Mention any allergies</li>
+                        <li><i class="fas fa-check text-success"></i> List current medications</li>
+                        <li><i class="fas fa-check text-success"></i> Include your age if relevant</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-scroll to bottom of chat
+document.addEventListener('DOMContentLoaded', function() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+});
+
+// Form submission handling with immediate feedback
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const messageInput = document.querySelector('textarea[name="message"]');
+    
+    if (form && submitBtn) {
+        form.addEventListener('submit', function(e) {
+            const message = messageInput.value.trim();
+            if (!message) {
+                e.preventDefault();
+                alert('Please type a message before sending.');
+                return false;
+            }
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
+            messageInput.disabled = true;
+            
+            // Show user message immediately in chat
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'message mb-3 user-message';
+                userMessageDiv.innerHTML = `
+                    <div class="d-flex justify-content-end">
+                        <div class="message-bubble bg-primary text-white" style="max-width: 70%; padding: 10px 15px; border-radius: 15px;">
+                            <div class="message-content">${message}</div>
+                            <small class="message-time text-white-50">
+                                <i class="fas fa-user"></i> You • Sending...
+                            </small>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(userMessageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    }
+});
+
+// Auto-scroll when new messages are added
+function scrollToBottom() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+
+// Call scroll function after page loads
+window.addEventListener('load', scrollToBottom);
+</script>
+
+<style>
+.message-bubble {
+    word-wrap: break-word;
+}
+
+.user-message .message-bubble {
+    margin-left: 20px;
+}
+
+.pharmacist-message .message-bubble {
+    margin-right: 20px;
+    border: 1px solid #dee2e6;
+}
+
+#chatMessages {
+    background-color: #f8f9fa;
+}
+</style>
+{% endblock %}

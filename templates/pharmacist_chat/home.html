@@ -1,0 +1,150 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Ask a Pharmacist - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2><i class="fas fa-comments text-primary"></i> Ask a Pharmacist</h2>
+            <p class="text-muted">Get expert advice from our qualified pharmacists</p>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-5">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 action-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-comment-medical fa-3x text-primary mb-3"></i>
+                    <h5>Start New Chat</h5>
+                    <p class="text-muted">Ask our pharmacist any question about medicines, dosages, or health concerns</p>
+                    <a href="{% url 'pharmacist_chat:start_chat' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Start Chat
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 action-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-history fa-3x text-success mb-3"></i>
+                    <h5>My Chats</h5>
+                    <p class="text-muted">View your previous conversations and ongoing chats with pharmacists</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'pharmacist_chat:my_chats' %}" class="btn btn-success">
+                            <i class="fas fa-list"></i> View Chats
+                        </a>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="btn btn-success">
+                            <i class="fas fa-sign-in-alt"></i> Login to View
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Responses -->
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">Frequently Asked Questions</h3>
+        </div>
+        
+        {% for category, responses in grouped_responses.items %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle text-info"></i> {{ category }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for response in responses %}
+                    <div class="mb-3">
+                        <h6 class="text-primary">{{ response.question }}</h6>
+                        <p class="text-muted small">{{ response.answer|truncatewords:20 }}</p>
+                        <a href="{% url 'pharmacist_chat:quick_response' response.id %}" class="btn btn-sm btn-outline-primary">
+                            Read More
+                        </a>
+                    </div>
+                    {% if not forloop.last %}<hr>{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Benefits Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">Why Ask Our Pharmacists?</h3>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <div class="benefit-icon">
+                <i class="fas fa-user-graduate fa-2x text-primary mb-2"></i>
+            </div>
+            <h5>Qualified Experts</h5>
+            <p class="text-muted">Licensed pharmacists with years of experience</p>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <div class="benefit-icon">
+                <i class="fas fa-clock fa-2x text-success mb-2"></i>
+            </div>
+            <h5>Quick Response</h5>
+            <p class="text-muted">Get answers to your questions within minutes</p>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <div class="benefit-icon">
+                <i class="fas fa-shield-alt fa-2x text-info mb-2"></i>
+            </div>
+            <h5>Safe & Confidential</h5>
+            <p class="text-muted">Your health information is kept private and secure</p>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <div class="benefit-icon">
+                <i class="fas fa-money-bill-slash fa-2x text-warning mb-2"></i>
+            </div>
+            <h5>Free Service</h5>
+            <p class="text-muted">No charge for asking questions to our pharmacists</p>
+        </div>
+    </div>
+    
+    <!-- Call to Action -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h4>Have a Question About Your Medicines?</h4>
+                    <p class="mb-3">Our pharmacists are here to help you understand your medications better</p>
+                    <a href="{% url 'pharmacist_chat:start_chat' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-comment-medical"></i> Ask Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.action-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.benefit-icon {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+{% endblock %}

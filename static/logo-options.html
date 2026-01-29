@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmazone Logo Options - Choose Your Favorite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .logo-option {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        .logo-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        .logo-option h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .logo-display {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-display img {
+            max-height: 60px;
+            max-width: 100%;
+        }
+        .logo-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .style-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 5px;
+        }
+        .dark-preview {
+            background: #2c3e50;
+            margin-top: 10px;
+        }
+        .dark-preview img {
+            filter: brightness(0) invert(1);
+        }
+        .choose-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        .choose-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .instructions {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Choose Your Pharmazone Logo</h1>
+        <p style="text-align: center; color: #7f8c8d; font-size: 1.1rem; margin-bottom: 40px;">
+            Select the design that best represents your vision for Pharmazone
+        </p>
+        
+        <div class="logo-grid">
+            <!-- Option 1: Modern Gradient -->
+            <div class="logo-option">
+                <h3>🚀 Modern Gradient Design</h3>
+                <div class="logo-display">
+                    <img src="images/pharmazone-logo-v2.svg" alt="Modern Gradient Logo">
+                </div>
+                <div class="logo-description">
+                    Features gradient colors, DNA helix, and modern typography. 
+                    Perfect for a tech-forward pharmaceutical platform.
+                </div>
+                <div>
+                    <span class="style-tag">Modern</span>
+                    <span class="style-tag">Scientific</span>
+                    <span class="style-tag">Gradient</span>
+                </div>
+                <button class="choose-btn" onclick="selectLogo('v2')">Choose This Design</button>
+            </div>
+
+            <!-- Option 2: Nature & Health -->
+            <div class="logo-option">
+                <h3>🌿 Nature & Health Focus</h3>
+                <div class="logo-display">
+                    <img src="images/pharmazone-logo-v3.svg" alt="Nature Health Logo">
+                </div>
+                <div class="logo-description">
+                    Organic leaf design with heart pulse. Emphasizes natural health 
+                    and wellness approach to pharmacy.
+                </div>
+                <div>
+                    <span class="style-tag">Natural</span>
+                    <span class="style-tag">Organic</span>
+                    <span class="style-tag">Wellness</span>
+                </div>
+                <button class="choose-btn" onclick="selectLogo('v3')">Choose This Design</button>
+            </div>
+
+            <!-- Option 3: Tech & Digital -->
+            <div class="logo-option">
+                <h3>💻 Tech & Digital Platform</h3>
+                <div class="logo-display">
+                    <img src="images/pharmazone-logo-v4.svg" alt="Tech Digital Logo">
+                </div>
+                <div class="logo-description">
+                    Geometric design with circuit elements. Perfect for a digital-first 
+                    pharmacy platform with modern appeal.
+                </div>
+                <div>
+                    <span class="style-tag">Digital</span>
+                    <span class="style-tag">Geometric</span>
+                    <span class="style-tag">Tech</span>
+                </div>
+                <button class="choose-btn" onclick="selectLogo('v4')">Choose This Design</button>
+            </div>
+
+            <!-- Option 4: Minimalist Hexagon -->
+            <div class="logo-option">
+                <h3>⬡ Minimalist Hexagon</h3>
+                <div class="logo-display">
+                    <img src="images/pharmazone-logo-small-v2.svg" alt="Minimalist Logo">
+                </div>
+                <div class="logo-description">
+                    Clean hexagonal design with "Pz" monogram. Simple, memorable, 
+                    and works great at any size.
+                </div>
+                <div>
+                    <span class="style-tag">Minimalist</span>
+                    <span class="style-tag">Clean</span>
+                    <span class="style-tag">Geometric</span>
+                </div>
+                <button class="choose-btn" onclick="selectLogo('small-v2')">Choose This Design</button>
+            </div>
+        </div>
+
+        <!-- Dark Background Previews -->
+        <div style="background: #2c3e50; padding: 30px; border-radius: 15px; margin-bottom: 30px;">
+            <h3 style="color: white; text-align: center; margin-bottom: 20px;">Dark Background Preview</h3>
+            <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <img src="images/pharmazone-logo-v2.svg" style="height: 50px; filter: brightness(0) invert(1);" alt="Logo V2 Dark">
+                <img src="images/pharmazone-logo-v3.svg" style="height: 50px; filter: brightness(0) invert(1);" alt="Logo V3 Dark">
+                <img src="images/pharmazone-logo-v4.svg" style="height: 50px; filter: brightness(0) invert(1);" alt="Logo V4 Dark">
+                <img src="images/pharmazone-logo-small-v2.svg" style="height: 40px; filter: brightness(0) invert(1);" alt="Logo Small V2 Dark">
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 How to Apply Your Choice</h3>
+            <p>Once you've selected your preferred logo design, I'll update your website to use it throughout the platform. Each design comes with:</p>
+            <ul style="text-align: left; display: inline-block; margin: 15px 0;">
+                <li>Full logo for headers and main branding</li>
+                <li>Small version for navigation bars</li>
+                <li>Icon version for favicons and app icons</li>
+                <li>Dark background variations</li>
+            </ul>
+            <p><strong>Just tell me which number you prefer and I'll implement it immediately!</strong></p>
+        </div>
+    </div>
+
+    <script>
+        function selectLogo(version) {
+            alert(`Great choice! You selected the ${version} design. Tell the developer to implement this version.`);
+        }
+    </script>
+</body>
+</html>

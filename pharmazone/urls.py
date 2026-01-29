@@ -18,14 +18,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from . import admin_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Redirect admin to custom dashboard
+    path('admin/', admin_views.admin_redirect, name='admin_redirect'),
+    # Keep original admin accessible at different URL if needed
+    path('django-admin/', admin.site.urls),
     path('', include('products.urls')),
     path('accounts/', include('accounts.urls')),
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
     path('payments/', include('payments.urls')),
+    path('ask-pharmacist/', include('pharmacist_chat.urls')),
+    path('appointments/', include('doctor_appointments.urls')),
 ]
 
 # Serve media files during development

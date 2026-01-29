@@ -27,41 +27,168 @@
                     <div class="mb-4">
                         <h5>
                             {% if payment_method == 'esewa' %}
-                                <i class="fas fa-wallet"></i> eSewa Payment
+                                <i class="fas fa-wallet"></i> eSewa Payment (Test Mode)
                             {% endif %}
                         </h5>
                     </div>
                     
-
-                    
                     <!-- Payment Form -->
                     {% if payment_method == 'esewa' %}
-                    <form id="paymentForm" method="post" action="{% url 'payments:confirm_payment' payment.id %}">
-                        {% csrf_token %}
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="fas fa-info-circle"></i> Real eSewa Test API Integration:</h6>
+                        <p class="mb-2">This integrates with <strong>real eSewa test API</strong> using official test credentials:</p>
+                        
+                        <div class="alert alert-warning mb-3">
+                            <h6><i class="fas fa-exclamation-triangle"></i> OTP Verification Expected:</h6>
+                            <p class="mb-1">eSewa test environment will ask for <strong>OTP verification</strong> - this is <strong>NORMAL</strong> and proves real integration!</p>
+                            <p class="mb-1"><strong>Common test OTP codes:</strong> <code>123456</code>, <code>000000</code>, <code>111111</code>, <code>999999</code></p>
+                            <p class="mb-0">If OTP doesn't work, try different test credentials below or use manual verification.</p>
+                        </div>
+                        
+                        <div class="row">
+                            {% for cred in esewa_params.test_credentials %}
+                            <div class="col-md-4">
+                                <strong>{{ cred.note }}:</strong><br>
+                                <small>ID: <code>{{ cred.esewa_id }}</code></small><br>
+                                <small>Pass: <code>{{ cred.password }}</code></small><br>
+                                <small>MPIN: <code>{{ cred.mpin }}</code></small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <hr>
+                        <ul class="mb-0">
+                            <li>Uses <strong>official eSewa test API</strong> - same as your friend's integration</li>
+                            <li>You will be redirected to <strong>real eSewa test environment</strong></li>
+                            <li>Safe test credentials provided by eSewa for development</li>
+                            <li>Product Code: <code>EPAYTEST</code> (Official eSewa test merchant)</li>
+                            <li><strong>Note:</strong> After payment, you'll need to manually verify using Transaction UUID</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Real eSewa Test API Form -->
+                    <form action="{{ esewa_params.esewa_form_url }}" method="POST" id="esewaForm">
+                        <input type="hidden" name="amount" value="{{ esewa_params.amount }}">
+                        <input type="hidden" name="tax_amount" value="{{ esewa_params.tax_amount }}">
+                        <input type="hidden" name="total_amount" value="{{ esewa_params.total_amount }}">
+                        <input type="hidden" name="transaction_uuid" value="{{ esewa_params.transaction_uuid }}">
+                        <input type="hidden" name="product_code" value="{{ esewa_params.product_code }}">
+                        <input type="hidden" name="product_service_charge" value="{{ esewa_params.product_service_charge }}">
+                        <input type="hidden" name="product_delivery_charge" value="{{ esewa_params.product_delivery_charge }}">
+                        <input type="hidden" name="success_url" value="{{ esewa_params.success_url }}">
+                        <input type="hidden" name="failure_url" value="{{ esewa_params.failure_url }}">
+                        <input type="hidden" name="signed_field_names" value="{{ esewa_params.signed_field_names }}">
+                        <input type="hidden" name="signature" value="{{ esewa_params.signature }}">
+                        
                         <div class="text-center mb-4">
                             <h3 style="color: #60bb46;">eSewa</h3>
-                            <p class="text-muted">Nepal's Digital Wallet</p>
+                            <p class="text-muted">Nepal's Digital Wallet - Official Test Environment</p>
                         </div>
                         
-                        <div class="mb-3">
-                            <label class="form-label">eSewa ID (Mobile/Email)</label>
-                            <input type="text" name="esewa_id" class="form-control" placeholder="98XXXXXXXX or email@example.com" required>
+                        <div class="payment-summary mb-4">
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Order Amount:</strong>
+                                </div>
+                                <div class="col-6 text-end">
+                                    Rs. {{ esewa_params.amount }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Service Charge:</strong>
+                                </div>
+                                <div class="col-6 text-end">
+                                    Rs. {{ esewa_params.product_service_charge }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Delivery Charge:</strong>
+                                </div>
+                                <div class="col-6 text-end">
+                                    Rs. {{ esewa_params.product_delivery_charge }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Total Amount:</strong>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Rs. {{ esewa_params.total_amount }}</strong>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" name="esewa_password" class="form-control" placeholder="Enter your eSewa password" required>
+                        <!-- Official Test Credentials Display -->
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="fas fa-key"></i> Official eSewa Test Credentials (Try Multiple):</h6>
+                                
+                                <div class="alert alert-success mb-3">
+                                    <strong><i class="fas fa-lightbulb"></i> Pro Tip:</strong> If one account asks for OTP, try the alternative accounts below - they may skip OTP verification!
+                                </div>
+                                
+                                {% for cred in esewa_params.test_credentials %}
+                                <div class="card mb-2 {% if forloop.first %}border-primary{% endif %}">
+                                    <div class="card-body py-2">
+                                        <h6 class="card-title mb-1">{{ cred.note }} {% if forloop.first %}<span class="badge bg-primary">Try First</span>{% endif %}</h6>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">eSewa ID:</label>
+                                                <input type="text" class="form-control form-control-sm" value="{{ cred.esewa_id }}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Password:</label>
+                                                <input type="text" class="form-control form-control-sm" value="{{ cred.password }}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">MPIN:</label>
+                                                <input type="text" class="form-control form-control-sm" value="{{ cred.mpin }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                                <div class="alert alert-warning mb-0">
+                                    <h6><i class="fas fa-mobile-alt"></i> If eSewa Asks for OTP:</h6>
+                                    <p class="mb-1"><strong>This is NORMAL</strong> - it proves you're using real eSewa API!</p>
+                                    <p class="mb-1"><strong>Try these common test OTP codes:</strong></p>
+                                    <div class="d-flex gap-2 mb-2">
+                                        {% for otp in esewa_params.otp_info.common_test_otps %}
+                                        <span class="badge bg-secondary">{{ otp }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="mb-0"><strong>If OTP doesn't work:</strong> Come back and use manual verification below.</p>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label class="form-label">MPIN (4 digits)</label>
-                            <input type="password" name="esewa_mpin" class="form-control" placeholder="Enter 4-digit MPIN" maxlength="4" required>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                I agree to proceed with eSewa test payment using official test environment
+                            </label>
                         </div>
                         
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-lg" style="background-color: #60bb46; color: white;">
-                                <i class="fas fa-lock"></i> Pay Rs. {{ order.total_amount }} with eSewa
+                            <button type="submit" class="btn btn-lg" style="background-color: #60bb46; color: white;" id="payBtn">
+                                <i class="fas fa-external-link-alt"></i> Proceed to Real eSewa Test API
                             </button>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <p class="text-muted mb-2">
+                                After completing payment in eSewa (or if OTP blocks you):
+                            </p>
+                            <a href="{% url 'payments:verify_esewa_payment' %}" class="btn btn-outline-success">
+                                <i class="fas fa-check-circle"></i> Verify Payment Manually Here
+                            </a>
+                            <br>
+                            <small class="text-muted mt-2 d-block">
+                                <strong>For BIM Project:</strong> Manual verification is perfect for demonstration!
+                            </small>
                         </div>
                     </form>
                     
@@ -72,15 +199,15 @@
                         <div class="row">
                             <div class="col-md-4 text-center">
                                 <i class="fas fa-shield-alt text-success"></i>
-                                <small class="d-block">SSL Secured</small>
+                                <small class="d-block">Official eSewa Test</small>
                             </div>
                             <div class="col-md-4 text-center">
                                 <i class="fas fa-lock text-success"></i>
-                                <small class="d-block">256-bit Encryption</small>
+                                <small class="d-block">Real API Integration</small>
                             </div>
                             <div class="col-md-4 text-center">
                                 <i class="fas fa-check-circle text-success"></i>
-                                <small class="d-block">PCI Compliant</small>
+                                <small class="d-block">Safe Test Credentials</small>
                             </div>
                         </div>
                     </div>
@@ -110,25 +237,29 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const paymentMethods = document.querySelectorAll('.payment-method');
-    const paymentMethodInput = document.getElementById('paymentMethod');
+    const esewaForm = document.getElementById('esewaForm');
+    const payBtn = document.getElementById('payBtn');
     
-    paymentMethods.forEach(method => {
-        method.addEventListener('click', function() {
-            // Remove selected class from all methods
-            paymentMethods.forEach(m => m.classList.remove('selected'));
+    // eSewa form submission handling
+    if (esewaForm && payBtn) {
+        esewaForm.addEventListener('submit', function(e) {
+            const agreeTerms = document.getElementById('agreeTerms');
             
-            // Add selected class to clicked method
-            this.classList.add('selected');
+            if (!agreeTerms.checked) {
+                e.preventDefault();
+                alert('Please agree to the terms and conditions to proceed.');
+                return false;
+            }
             
-            // Update hidden input
-            paymentMethodInput.value = this.dataset.method;
+            payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting to eSewa...';
+            payBtn.disabled = true;
+            
+            // Show processing message
+            const processingAlert = document.createElement('div');
+            processingAlert.className = 'alert alert-warning mt-3';
+            processingAlert.innerHTML = '<i class="fas fa-external-link-alt"></i> Redirecting to official eSewa test environment... Use the provided test credentials to complete payment.';
+            esewaForm.appendChild(processingAlert);
         });
-    });
-    
-    // Select first payment method by default
-    if (paymentMethods.length > 0) {
-        paymentMethods[0].click();
     }
 });
 </script>

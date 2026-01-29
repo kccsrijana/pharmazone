@@ -90,7 +90,7 @@
             </div>
             
             <!-- Add to Cart -->
-            {% if medicine.is_in_stock %}
+            {% if medicine.is_in_stock and user.user_type != 'admin' and not user.is_staff %}
                 <form method="post" action="{% url 'cart:add_to_cart' medicine.id %}" class="mb-3">
                     {% csrf_token %}
                     <div class="row align-items-center">
@@ -108,6 +108,11 @@
                         </div>
                     </div>
                 </form>
+            {% elif user.user_type == 'admin' or user.is_staff %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Admin Access:</strong> Admin users cannot add items to cart. This is for customer use only.
+                </div>
             {% endif %}
             
             <!-- Description -->

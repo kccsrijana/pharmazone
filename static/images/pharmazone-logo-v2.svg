@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient definitions -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.1" />
+    </linearGradient>
+    <linearGradient id="pillGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea" />
+      <stop offset="100%" style="stop-color:#764ba2" />
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea" />
+      <stop offset="100%" style="stop-color:#764ba2" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main logo container -->
+  <circle cx="30" cy="30" r="28" fill="url(#bgGradient)" stroke="url(#pillGradient)" stroke-width="1"/>
+  
+  <!-- Stylized pill/capsule -->
+  <g transform="translate(30, 30)">
+    <!-- Pill body -->
+    <ellipse cx="0" cy="0" rx="15" ry="8" fill="url(#pillGradient)" transform="rotate(-20)"/>
+    <!-- Pill separator line -->
+    <line x1="-8" y1="-12" x2="8" y2="12" stroke="white" stroke-width="2" opacity="0.8"/>
+    <!-- Small dots for texture -->
+    <circle cx="-5" cy="-3" r="1.5" fill="white" opacity="0.6"/>
+    <circle cx="3" cy="5" r="1" fill="white" opacity="0.4"/>
+  </g>
+  
+  <!-- DNA helix accent -->
+  <g transform="translate(50, 15)">
+    <path d="M0,0 Q3,5 0,10 Q-3,15 0,20 Q3,25 0,30" stroke="url(#pillGradient)" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M6,0 Q3,5 6,10 Q9,15 6,20 Q3,25 6,30" stroke="url(#pillGradient)" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <!-- Connection lines -->
+    <line x1="0" y1="5" x2="6" y2="5" stroke="url(#pillGradient)" stroke-width="1" opacity="0.4"/>
+    <line x1="0" y1="15" x2="6" y2="15" stroke="url(#pillGradient)" stroke-width="1" opacity="0.4"/>
+    <line x1="0" y1="25" x2="6" y2="25" stroke="url(#pillGradient)" stroke-width="1" opacity="0.4"/>
+  </g>
+  
+  <!-- Company Name with modern typography -->
+  <text x="75" y="22" font-family="'Segoe UI', Arial, sans-serif" font-size="20" font-weight="700" fill="url(#textGradient)">
+    PHARMA
+  </text>
+  <text x="75" y="40" font-family="'Segoe UI', Arial, sans-serif" font-size="20" font-weight="300" fill="#2c3e50">
+    ZONE
+  </text>
+  
+  <!-- Modern tagline -->
+  <text x="75" y="52" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#7f8c8d" letter-spacing="1px">
+    HEALTH • CARE • INNOVATION
+  </text>
+  
+  <!-- Decorative molecular structure -->
+  <g transform="translate(170, 20)" opacity="0.3">
+    <circle cx="0" cy="0" r="2" fill="url(#pillGradient)"/>
+    <circle cx="8" cy="4" r="1.5" fill="url(#pillGradient)"/>
+    <circle cx="4" cy="12" r="1" fill="url(#pillGradient)"/>
+    <line x1="0" y1="0" x2="8" y2="4" stroke="url(#pillGradient)" stroke-width="1"/>
+    <line x1="0" y1="0" x2="4" y2="12" stroke="url(#pillGradient)" stroke-width="1"/>
+  </g>
+</svg>

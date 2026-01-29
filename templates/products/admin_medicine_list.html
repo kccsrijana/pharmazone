@@ -1,0 +1,199 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Manage Medicines - Admin - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-pills text-primary"></i> Manage Medicines</h2>
+                <a href="{% url 'products:admin_medicine_add' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Medicine
+                </a>
+            </div>
+            
+            <!-- Filters and Search -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Search</label>
+                            <input type="text" name="search" class="form-control" value="{{ search_query }}" 
+                                   placeholder="Search medicines, categories, manufacturers...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-control">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-control">
+                                <option value="">All Status</option>
+                                <option value="active" {% if status_filter == "active" %}selected{% endif %}>Active</option>
+                                <option value="inactive" {% if status_filter == "inactive" %}selected{% endif %}>Inactive</option>
+                                <option value="featured" {% if status_filter == "featured" %}selected{% endif %}>Featured</option>
+                                <option value="low_stock" {% if status_filter == "low_stock" %}selected{% endif %}>Low Stock (≤10)</option>
+                                <option value="out_of_stock" {% if status_filter == "out_of_stock" %}selected{% endif %}>Out of Stock</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-outline-primary me-2">Filter</button>
+                            <a href="{% url 'products:admin_medicine_list' %}" class="btn btn-outline-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Medicine List -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Medicine</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicine in medicines %}
+                                    <tr>
+                                        <td>
+                                            {% if medicine.image %}
+                                                <img src="{{ medicine.image.url }}" alt="{{ medicine.name }}" 
+                                                     class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="bg-light d-flex align-items-center justify-content-center" 
+                                                     style="width: 50px; height: 50px; border-radius: 4px;">
+                                                    <i class="fas fa-pills text-muted"></i>
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>{{ medicine.name }}</strong>
+                                                {% if medicine.strength %}
+                                                    <br><small class="text-muted">{{ medicine.strength }}</small>
+                                                {% endif %}
+                                                {% if medicine.generic_name %}
+                                                    <br><small class="text-info">{{ medicine.generic_name }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td>{{ medicine.category.name }}</td>
+                                        <td>
+                                            {% if medicine.discount_price %}
+                                                <span class="text-success fw-bold">Rs. {{ medicine.discount_price }}</span>
+                                                <br><small class="text-muted text-decoration-line-through">Rs. {{ medicine.price }}</small>
+                                            {% else %}
+                                                <span class="fw-bold">Rs. {{ medicine.price }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if medicine.stock_quantity == 0 %}
+                                                <span class="badge bg-danger">Out of Stock</span>
+                                            {% elif medicine.stock_quantity <= 10 %}
+                                                <span class="badge bg-warning">{{ medicine.stock_quantity }} left</span>
+                                            {% else %}
+                                                <span class="badge bg-success">{{ medicine.stock_quantity }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if medicine.is_active %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            {% endif %}
+                                            {% if medicine.is_featured %}
+                                                <span class="badge bg-primary">Featured</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'products:admin_medicine_detail' medicine.id %}" 
+                                                   class="btn btn-sm btn-outline-info" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'products:admin_medicine_edit' medicine.id %}" 
+                                                   class="btn btn-sm btn-outline-primary" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'products:admin_medicine_toggle_status' medicine.id %}" 
+                                                   class="btn btn-sm btn-outline-{% if medicine.is_active %}warning{% else %}success{% endif %}" 
+                                                   title="{% if medicine.is_active %}Deactivate{% else %}Activate{% endif %}">
+                                                    <i class="fas fa-{% if medicine.is_active %}pause{% else %}play{% endif %}"></i>
+                                                </a>
+                                                <a href="{% url 'products:admin_medicine_toggle_featured' medicine.id %}" 
+                                                   class="btn btn-sm btn-outline-{% if medicine.is_featured %}secondary{% else %}primary{% endif %}" 
+                                                   title="{% if medicine.is_featured %}Unfeature{% else %}Feature{% endif %}">
+                                                    <i class="fas fa-star"></i>
+                                                </a>
+                                                <a href="{% url 'products:admin_medicine_delete' medicine.id %}" 
+                                                   class="btn btn-sm btn-outline-danger" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                            <h5>No medicines found</h5>
+                                            <p class="text-muted">Try adjusting your search criteria or add a new medicine.</p>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    {% if medicines.has_other_pages %}
+                        <nav aria-label="Medicine pagination" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if medicines.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ medicines.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Previous</a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for num in medicines.paginator.page_range %}
+                                    {% if medicines.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if medicines.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ medicines.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

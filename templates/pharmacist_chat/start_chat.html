@@ -1,0 +1,80 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Start Chat - Ask a Pharmacist{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-comment-medical text-primary"></i> Start New Chat with Pharmacist</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+                            {{ form.category }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.subject.id_for_label }}" class="form-label">{{ form.subject.label }}</label>
+                            {{ form.subject }}
+                            <div class="form-text">Briefly describe what you need help with</div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>What to expect:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>A qualified pharmacist will respond to your question</li>
+                                <li>Response time is usually within 30 minutes during business hours</li>
+                                <li>This service is completely free</li>
+                                <li>Your conversation is private and confidential</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Start Chat
+                            </button>
+                            <a href="{% url 'pharmacist_chat:home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tips Section -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-lightbulb text-warning"></i> Tips for Better Help</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Be Specific</h6>
+                            <p class="text-muted small">Include medicine names, dosages, and specific symptoms</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Mention Allergies</h6>
+                            <p class="text-muted small">Tell us about any known allergies or medical conditions</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Current Medications</h6>
+                            <p class="text-muted small">List any other medicines you're currently taking</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Age & Gender</h6>
+                            <p class="text-muted small">This helps us provide more accurate advice</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

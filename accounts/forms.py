@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from .models import User, PharmacyProfile, CustomerProfile
+from .validators import EmailValidator
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -23,8 +24,16 @@ class CustomUserCreationForm(UserCreationForm):
     
     def clean_email(self):
         email = self.cleaned_data.get('email')
+        
+        # Check if email already exists
         if User.objects.filter(email=email).exists():
             raise ValidationError("A user with this email already exists.")
+        
+        # Simple email validation
+        validation_result = EmailValidator.validate_simple(email)
+        if not validation_result['is_valid']:
+            raise ValidationError(validation_result['errors'][0])
+        
         return email
     
     def clean_phone_number(self):
@@ -63,12 +72,21 @@ class PharmacyProfileForm(forms.ModelForm):
             'description', 'website'
         ]
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
+            'pharmacy_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'license_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'gst_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'website': forms.URLInput(attrs={'class': 'form-control'}),
         }
     
     def clean_license_number(self):
         license_number = self.cleaned_data.get('license_number')
-        if PharmacyProfile.objects.filter(license_number=license_number).exists():
+        # Exclude current instance when checking for duplicates
+        existing_profiles = PharmacyProfile.objects.filter(license_number=license_number)
+        if self.instance.pk:
+            existing_profiles = existing_profiles.exclude(pk=self.instance.pk)
+        
+        if existing_profiles.exists():
             raise ValidationError("A pharmacy with this license number already exists.")
         return license_number
 
@@ -82,19 +100,49 @@ class CustomerProfileForm(forms.ModelForm):
             'emergency_contact', 'medical_conditions', 'preferred_pharmacy'
         ]
         widgets = {
-            'medical_conditions': forms.Textarea(attrs={'rows': 3}),
+            'emergency_contact': forms.TextInput(attrs={'class': 'form-control'}),
+            'medical_conditions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'preferred_pharmacy': forms.Select(attrs={'class': 'form-control'}),
         }
 
 
 class UserUpdateForm(forms.ModelForm):
     """Form for updating user information"""
     
+    COUNTRY_CHOICES = [
+        ('Nepal', 'Nepal'),
+        ('India', 'India'),
+        ('Bangladesh', 'Bangladesh'),
+        ('Pakistan', 'Pakistan'),
+        ('Sri Lanka', 'Sri Lanka'),
+        ('Bhutan', 'Bhutan'),
+        ('Maldives', 'Maldives'),
+        ('Afghanistan', 'Afghanistan'),
+        ('Myanmar', 'Myanmar'),
+        ('Thailand', 'Thailand'),
+        ('Other', 'Other'),
+    ]
+    
+    country = forms.ChoiceField(
+        choices=COUNTRY_CHOICES,
+        initial='Nepal',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
     class Meta:
         model = User
         fields = [
             'first_name', 'last_name', 'email', 'phone_number',
-            'address', 'city', 'state', 'postal_code', 'country'
+            'address', 'city', 'country'
         ]
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'city': forms.TextInput(attrs={'class': 'form-control'}),
+        }
     
     def clean_email(self):
         email = self.cleaned_data.get('email')

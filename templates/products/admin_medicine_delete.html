@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Delete {{ medicine.name }} - Admin - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if medicine.image %}
+                            <img src="{{ medicine.image.url }}" alt="{{ medicine.name }}" 
+                                 class="img-fluid rounded mb-3" style="max-height: 150px;">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded mb-3 mx-auto" 
+                                 style="height: 150px; width: 150px;">
+                                <i class="fas fa-pills fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <h4>{{ medicine.name }}</h4>
+                        {% if medicine.strength %}
+                            <p class="text-muted">{{ medicine.strength }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Warning!</h6>
+                        <p class="mb-0">Are you sure you want to delete this medicine? This action cannot be undone.</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Medicine Details:</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Category:</strong> {{ medicine.category.name }}</li>
+                            <li><strong>Manufacturer:</strong> {{ medicine.manufacturer.name }}</li>
+                            <li><strong>Price:</strong> Rs. {{ medicine.current_price }}</li>
+                            <li><strong>Stock:</strong> {{ medicine.stock_quantity }}</li>
+                            <li><strong>Status:</strong> 
+                                {% if medicine.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <form method="post" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger flex-fill">
+                            <i class="fas fa-trash"></i> Yes, Delete Medicine
+                        </button>
+                        <a href="{% url 'products:admin_medicine_detail' medicine.id %}" class="btn btn-outline-secondary flex-fill">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

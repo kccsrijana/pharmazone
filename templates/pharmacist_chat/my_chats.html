@@ -1,0 +1,115 @@
+{% extends 'base/base.html' %}
+
+{% block title %}My Chats - Ask a Pharmacist{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-comments text-primary"></i> My Chats</h2>
+                <a href="{% url 'pharmacist_chat:start_chat' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Start New Chat
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for chat in chats %}
+        <div class="col-md-6 mb-4">
+            <div class="card chat-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">{{ chat.subject|truncatechars:50 }}</h6>
+                    <span class="badge bg-{% if chat.status == 'open' %}warning{% elif chat.status == 'in_progress' %}info{% else %}success{% endif %}">
+                        {{ chat.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <i class="fas fa-tag"></i> {{ chat.get_category_display }}
+                            </small>
+                        </div>
+                        <div class="col-6 text-end">
+                            <small class="text-muted">
+                                <i class="fas fa-clock"></i> {{ chat.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    {% if chat.pharmacist %}
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-user-md"></i> 
+                            Pharmacist: {{ chat.pharmacist.get_full_name|default:chat.pharmacist.username }}
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    {% if chat.last_message %}
+                    <div class="mb-3">
+                        <small class="text-muted">Last message:</small>
+                        <p class="small">{{ chat.last_message.message|truncatechars:100 }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if chat.unread_count_for_user > 0 %}
+                    <div class="mb-2">
+                        <span class="badge bg-danger">
+                            {{ chat.unread_count_for_user }} new message{{ chat.unread_count_for_user|pluralize }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'pharmacist_chat:chat_detail' chat.id %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye"></i> View Chat
+                        </a>
+                        {% if chat.status != 'closed' %}
+                        <a href="{% url 'pharmacist_chat:close_chat' chat.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Close this chat?')">
+                            <i class="fas fa-times"></i> Close
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
+                <h4>No chats yet</h4>
+                <p class="text-muted">Start your first conversation with our pharmacists</p>
+                <a href="{% url 'pharmacist_chat:start_chat' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Start New Chat
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Back to Home -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{% url 'pharmacist_chat:home' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Ask Pharmacist Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.chat-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.chat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+</style>
+{% endblock %}

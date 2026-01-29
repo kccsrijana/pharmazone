@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="leafGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#27ae60" />
+      <stop offset="100%" style="stop-color:#2ecc71" />
+    </radialGradient>
+    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e74c3c" />
+      <stop offset="100%" style="stop-color:#c0392b" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Organic leaf shape -->
+  <g transform="translate(30, 30)">
+    <path d="M0,0 Q-15,-10 -20,0 Q-15,10 0,0 Q15,-10 20,0 Q15,10 0,0" fill="url(#leafGradient)" opacity="0.8"/>
+    <!-- Leaf veins -->
+    <path d="M0,0 L-10,-5 M0,0 L-10,5 M0,0 L10,-5 M0,0 L10,5" stroke="white" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- Heart pulse -->
+  <g transform="translate(15, 15)">
+    <path d="M0,10 Q-5,0 -10,5 Q-15,10 -10,15 L0,25 L10,15 Q15,10 10,5 Q5,0 0,10" fill="url(#heartGradient)" opacity="0.7"/>
+  </g>
+  
+  <!-- Pulse line -->
+  <g transform="translate(45, 30)">
+    <path d="M0,0 L5,-8 L10,8 L15,-5 L20,0" stroke="url(#heartGradient)" stroke-width="2" fill="none" opacity="0.6"/>
+  </g>
+  
+  <!-- Modern text -->
+  <text x="75" y="20" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="600" fill="#27ae60">
+    Pharma
+  </text>
+  <text x="75" y="38" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="400" fill="#2c3e50">
+    Zone
+  </text>
+  
+  <!-- Nature-inspired tagline -->
+  <text x="75" y="50" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#7f8c8d">
+    Natural Health Solutions
+  </text>
+  
+  <!-- Floating particles -->
+  <circle cx="160" cy="15" r="1.5" fill="#27ae60" opacity="0.4"/>
+  <circle cx="170" cy="25" r="2" fill="#2ecc71" opacity="0.3"/>
+  <circle cx="165" cy="35" r="1" fill="#27ae60" opacity="0.5"/>
+</svg>

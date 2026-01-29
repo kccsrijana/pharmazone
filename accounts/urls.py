@@ -13,4 +13,5 @@ urlpatterns = [
     path('customer/dashboard/', views.customer_dashboard, name='customer_dashboard'),
     path('check-username/', views.check_username, name='check_username'),
     path('check-email/', views.check_email, name='check_email'),
+    path('validate-email-ajax/', views.validate_email_ajax, name='validate_email_ajax'),
 ]

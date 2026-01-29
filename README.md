@@ -139,8 +139,8 @@ This is an academic project, but suggestions and improvements are welcome!
 ## 📞 Contact
 
 For any queries, please contact:
-- Email: info@pharmazone.com
-- Phone: +977 9762607501
+- Email: info@pharmazone.com.np
+- Phone: +977-1-4567890
 
 ---
 

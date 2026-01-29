@@ -8,9 +8,21 @@ from products.models import Medicine
 from .models import Cart, CartItem
 
 
+def is_secure_admin(user):
+    """Check if user is a secure admin"""
+    return (user.is_authenticated and 
+            user.is_staff and 
+            user.username == 'admin')
+
+
 @login_required
 def cart_view(request):
     """View shopping cart"""
+    # Prevent admin users from accessing cart
+    if is_secure_admin(request.user):
+        messages.error(request, 'Admin users cannot access shopping cart.')
+        return redirect('doctor_appointments:admin_dashboard')
+    
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = cart.items.all()
     
@@ -39,6 +51,11 @@ def cart_view(request):
 @require_POST
 def add_to_cart(request, medicine_id):
     """Add medicine to cart"""
+    # Prevent admin users from adding to cart
+    if is_secure_admin(request.user):
+        messages.error(request, 'Admin users cannot add items to cart.')
+        return redirect('doctor_appointments:admin_dashboard')
+    
     medicine = get_object_or_404(Medicine, id=medicine_id, is_active=True)
     quantity = int(request.POST.get('quantity', 1))
     
@@ -93,6 +110,11 @@ def add_to_cart(request, medicine_id):
 @require_POST
 def update_cart_item(request, item_id):
     """Update cart item quantity"""
+    # Prevent admin users from updating cart
+    if is_secure_admin(request.user):
+        messages.error(request, 'Admin users cannot modify cart.')
+        return redirect('doctor_appointments:admin_dashboard')
+    
     cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     quantity = int(request.POST.get('quantity', 1))
     
@@ -121,6 +143,11 @@ def update_cart_item(request, item_id):
 @require_POST
 def remove_from_cart(request, item_id):
     """Remove item from cart"""
+    # Prevent admin users from modifying cart
+    if is_secure_admin(request.user):
+        messages.error(request, 'Admin users cannot modify cart.')
+        return redirect('doctor_appointments:admin_dashboard')
+    
     try:
         cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
         medicine_name = cart_item.medicine.name
@@ -137,6 +164,11 @@ def remove_from_cart(request, item_id):
 @require_POST
 def clear_cart(request):
     """Clear entire cart"""
+    # Prevent admin users from clearing cart
+    if is_secure_admin(request.user):
+        messages.error(request, 'Admin users cannot modify cart.')
+        return redirect('doctor_appointments:admin_dashboard')
+    
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart.items.all().delete()
     
@@ -148,6 +180,10 @@ def clear_cart(request):
 @csrf_exempt
 def cart_count(request):
     """AJAX endpoint to get cart item count"""
+    # Admin users don't have carts
+    if is_secure_admin(request.user):
+        return JsonResponse({'count': 0})
+    
     if request.user.is_authenticated:
         cart, created = Cart.objects.get_or_create(user=request.user)
         count = cart.total_items
@@ -161,6 +197,13 @@ def cart_count(request):
 @csrf_exempt
 def add_to_cart_ajax(request, medicine_id):
     """AJAX endpoint to add item to cart"""
+    # Prevent admin users from adding to cart
+    if is_secure_admin(request.user):
+        return JsonResponse({
+            'success': False,
+            'message': 'Admin users cannot add items to cart.'
+        })
+    
     if request.method == 'POST':
         medicine = get_object_or_404(Medicine, id=medicine_id, is_active=True)
         quantity = int(request.POST.get('quantity', 1))

@@ -220,6 +220,30 @@
                             <h5>Order Actions</h5>
                         </div>
                         <div class="card-body">
+                            <!-- Invoice Actions -->
+                            {% if order.payment_status == 'paid' %}
+                                {% if order.invoice %}
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-file-invoice text-success"></i> Invoice Available</h6>
+                                    <div class="btn-group w-100" role="group">
+                                        <a href="{% url 'payments:invoice_detail' order.invoice.id %}" class="btn btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View Invoice
+                                        </a>
+                                        <a href="{% url 'payments:view_invoice_pdf' order.invoice.id %}" class="btn btn-outline-info" target="_blank">
+                                            <i class="fas fa-file-pdf"></i> View PDF
+                                        </a>
+                                        <a href="{% url 'payments:download_invoice_pdf' order.invoice.id %}" class="btn btn-success">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    </div>
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-info-circle"></i> Your invoice is ready for download
+                                    </small>
+                                </div>
+                                <hr>
+                                {% endif %}
+                            {% endif %}
+                            
                             {% if order.status in 'pending,confirmed' and order.status != 'cancelled' %}
                                 <button type="button" class="btn btn-danger w-100 mb-2" data-bs-toggle="modal" data-bs-target="#cancelModal">
                                     <i class="fas fa-times-circle"></i> Cancel Order

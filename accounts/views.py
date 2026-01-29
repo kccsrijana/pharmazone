@@ -40,11 +40,13 @@ def login_view(request):
                     if not remember_me:
                         request.session.set_expiry(0)  # Session expires when browser closes
                     
-                    # Redirect based on user type
+                    # Redirect based on user type with secure admin check
                     if user.user_type == 'pharmacy':
                         return redirect('accounts:pharmacy_dashboard')
-                    elif user.is_staff:
-                        return redirect('admin:index')
+                    elif (user.is_staff and 
+                          (user.is_superuser or user.user_type == 'admin') and
+                          user.username in ['admin']):  # Secure admin check
+                        return redirect('doctor_appointments:admin_dashboard')
                     else:
                         return redirect('products:home')
                 else:
@@ -75,9 +77,10 @@ class SignUpView(CreateView):
     
     def form_valid(self, form):
         response = super().form_valid(form)
+        
         messages.success(
             self.request, 
-            'Account created successfully! Please log in to continue.'
+            'Account created successfully! You can now login immediately.'
         )
         return response
 
@@ -117,6 +120,7 @@ def update_profile(request):
             profile, created = CustomerProfile.objects.get_or_create(user=user)
             profile_form = CustomerProfileForm(request.POST, instance=profile)
         else:
+            # For admin users and other types, no additional profile form needed
             profile_form = None
         
         if user_form.is_valid() and (profile_form is None or profile_form.is_valid()):
@@ -125,6 +129,16 @@ def update_profile(request):
                 profile_form.save()
             messages.success(request, 'Profile updated successfully!')
             return redirect('accounts:profile')
+        else:
+            # Add form errors to messages for debugging
+            if not user_form.is_valid():
+                for field, errors in user_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field}: {error}")
+            if profile_form and not profile_form.is_valid():
+                for field, errors in profile_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field}: {error}")
     else:
         user_form = UserUpdateForm(instance=user)
         
@@ -135,6 +149,7 @@ def update_profile(request):
             profile, created = CustomerProfile.objects.get_or_create(user=user)
             profile_form = CustomerProfileForm(instance=profile)
         else:
+            # For admin users and other types, no additional profile form needed
             profile_form = None
     
     context = {
@@ -191,4 +206,21 @@ def check_email(request):
         if User.objects.filter(email=email).exists():
             return JsonResponse({'available': False})
         return JsonResponse({'available': True})
+    return JsonResponse({'error': 'Invalid request'})
+
+
+@csrf_exempt
+def validate_email_ajax(request):
+    """AJAX endpoint for simple email validation"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        from .validators import EmailValidator
+        result = EmailValidator.validate_simple(email)
+        
+        return JsonResponse({
+            'is_valid': result['is_valid'],
+            'errors': result['errors']
+        })
+    
     return JsonResponse({'error': 'Invalid request'})

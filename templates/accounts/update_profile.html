@@ -11,6 +11,25 @@
                     <h4>Update Profile</h4>
                 </div>
                 <div class="card-body">
+                    <!-- Display form errors -->
+                    {% if user_form.errors or profile_form.errors %}
+                        <div class="alert alert-danger">
+                            <h6>Please correct the following errors:</h6>
+                            {% for field, errors in user_form.errors.items %}
+                                {% for error in errors %}
+                                    <div>{{ field|title }}: {{ error }}</div>
+                                {% endfor %}
+                            {% endfor %}
+                            {% if profile_form %}
+                                {% for field, errors in profile_form.errors.items %}
+                                    {% for error in errors %}
+                                        <div>{{ field|title }}: {{ error }}</div>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    
                     <form method="post">
                         {% csrf_token %}
                         
@@ -19,10 +38,24 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">First Name</label>
                                 {{ user_form.first_name }}
+                                {% if user_form.first_name.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in user_form.first_name.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Last Name</label>
                                 {{ user_form.last_name }}
+                                {% if user_form.last_name.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in user_form.last_name.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                         
@@ -30,10 +63,24 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Email</label>
                                 {{ user_form.email }}
+                                {% if user_form.email.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in user_form.email.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Phone Number</label>
                                 {{ user_form.phone_number }}
+                                {% if user_form.phone_number.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in user_form.phone_number.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                         
@@ -41,26 +88,38 @@
                         <div class="mb-3">
                             <label class="form-label">Address</label>
                             {{ user_form.address }}
+                            {% if user_form.address.errors %}
+                                <div class="text-danger small">
+                                    {% for error in user_form.address.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                         
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label">City</label>
                                 {{ user_form.city }}
+                                {% if user_form.city.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in user_form.city.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">State</label>
-                                {{ user_form.state }}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Country</label>
+                                {{ user_form.country }}
+                                {% if user_form.country.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in user_form.country.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Postal Code</label>
-                                {{ user_form.postal_code }}
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Country</label>
-                            {{ user_form.country }}
                         </div>
                         
                         {% if profile_form %}
@@ -69,38 +128,89 @@
                                 <div class="mb-3">
                                     <label class="form-label">Pharmacy Name</label>
                                     {{ profile_form.pharmacy_name }}
+                                    {% if profile_form.pharmacy_name.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in profile_form.pharmacy_name.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">License Number</label>
                                     {{ profile_form.license_number }}
+                                    {% if profile_form.license_number.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in profile_form.license_number.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">GST Number</label>
                                     {{ profile_form.gst_number }}
+                                    {% if profile_form.gst_number.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in profile_form.gst_number.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Description</label>
                                     {{ profile_form.description }}
+                                    {% if profile_form.description.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in profile_form.description.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Website</label>
                                     {{ profile_form.website }}
+                                    {% if profile_form.website.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in profile_form.website.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             {% elif user.user_type == 'customer' %}
                                 <div class="mb-3">
                                     <label class="form-label">Emergency Contact</label>
                                     {{ profile_form.emergency_contact }}
+                                    {% if profile_form.emergency_contact.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in profile_form.emergency_contact.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Medical Conditions</label>
                                     {{ profile_form.medical_conditions }}
+                                    {% if profile_form.medical_conditions.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in profile_form.medical_conditions.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             {% endif %}
                         {% endif %}
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Profile
+                            </button>
                         </div>
                     </form>
                 </div>

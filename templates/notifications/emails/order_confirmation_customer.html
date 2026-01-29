@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Order Confirmation - {{ site_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .order-details { background: white; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ site_name }}</h1>
+            <h2>Order Confirmation</h2>
+        </div>
+        
+        <div class="content">
+            <div class="success">
+                ✅ Your order has been successfully placed!
+            </div>
+            
+            <p>Dear {{ customer.get_full_name|default:customer.username }},</p>
+            
+            <p>Thank you for your order! We have received your order and it is being processed. Here are your order details:</p>
+            
+            <div class="order-details">
+                <h3>Order #{{ order.id }}</h3>
+                <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y H:i" }}</p>
+                <p><strong>Total Amount:</strong> Rs. {{ order.total_amount }}</p>
+                <p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
+                
+                {% if order.payment_method == 'cod' %}
+                    <p><strong>Payment:</strong> You will pay Rs. {{ order.total_amount }} when your order is delivered.</p>
+                {% endif %}
+                
+                <h4>Items Ordered:</h4>
+                <ul>
+                    {% for item in order.items.all %}
+                        <li>{{ item.medicine_name }} ({{ item.medicine_strength }}) - Qty: {{ item.quantity }} - Rs. {{ item.total_price }}</li>
+                    {% endfor %}
+                </ul>
+                
+                <h4>Delivery Address:</h4>
+                <p>
+                    {{ order.shipping_address }}<br>
+                    {{ order.shipping_city }}, {{ order.shipping_country }}<br>
+                    Phone: {{ order.shipping_phone }}
+                </p>
+                
+                {% if order.requires_prescription %}
+                    <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <strong>📋 Prescription Required:</strong> Your order contains prescription medicines. Please ensure you have uploaded a valid prescription. Our pharmacist will verify it before processing your order.
+                    </div>
+                {% endif %}
+            </div>
+            
+            <p style="text-align: center;">
+                <a href="http://127.0.0.1:8003/orders/{{ order.id }}/" class="btn">Track Your Order</a>
+            </p>
+            
+            <p><strong>What's Next?</strong></p>
+            <ul>
+                <li>We will process your order within 2-4 hours</li>
+                <li>You will receive updates via email and SMS</li>
+                <li>Expected delivery: 1-2 business days</li>
+                <li>For urgent queries, call us at +977-1-4567890</li>
+            </ul>
+            
+            <p>Thank you for choosing {{ site_name }} for your healthcare needs!</p>
+        </div>
+        
+        <div class="footer">
+            <p>{{ site_name }} - Your Health, Our Priority<br>
+            Email: info@pharmazone.com.np | Phone: +977-1-4567890<br>
+            Kathmandu, Nepal</p>
+        </div>
+    </div>
+</body>
+</html>

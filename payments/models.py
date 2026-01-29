@@ -13,6 +13,7 @@ class Payment(models.Model):
         ('upi', 'UPI'),
         ('wallet', 'Digital Wallet'),
         ('cod', 'Cash on Delivery'),
+        ('esewa', 'eSewa'),
     ]
     
     STATUS_CHOICES = [
@@ -42,7 +43,7 @@ class Payment(models.Model):
     # Gateway information
     gateway_transaction_id = models.CharField(max_length=200, blank=True)
     gateway_response = models.JSONField(default=dict, blank=True)
-    gateway_name = models.CharField(max_length=50, default='razorpay')  # Default to Razorpay
+    gateway_name = models.CharField(max_length=50, default='esewa')
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -70,6 +71,93 @@ class Payment(models.Model):
         if not self.payment_id:
             import uuid
             self.payment_id = f"PAY_{str(uuid.uuid4())[:12].upper()}"
+        super().save(*args, **kwargs)
+
+
+class Invoice(models.Model):
+    """Invoice model for completed orders"""
+    
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('sent', 'Sent'),
+        ('paid', 'Paid'),
+        ('overdue', 'Overdue'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    # Invoice identification
+    invoice_number = models.CharField(max_length=50, unique=True)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='invoice')
+    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True, related_name='invoices')
+    
+    # Invoice details
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    issue_date = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateTimeField(null=True, blank=True)
+    
+    # Amounts
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    shipping_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Company details (for invoice header)
+    company_name = models.CharField(max_length=200, default='Pharmazone')
+    company_address = models.TextField(default='Kathmandu, Nepal')
+    company_phone = models.CharField(max_length=20, default='+977-1-4567890')
+    company_email = models.EmailField(default='info@pharmazone.com.np')
+    company_website = models.URLField(default='https://pharmazone.com.np')
+    
+    # Customer details (copied from order)
+    customer_name = models.CharField(max_length=200)
+    customer_email = models.EmailField()
+    customer_phone = models.CharField(max_length=20)
+    customer_address = models.TextField()
+    
+    # Additional information
+    notes = models.TextField(blank=True)
+    terms_and_conditions = models.TextField(
+        default='Payment is due within 30 days. Thank you for your business!'
+    )
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['invoice_number']),
+            models.Index(fields=['order']),
+            models.Index(fields=['status']),
+        ]
+    
+    def __str__(self):
+        return f"Invoice {self.invoice_number}"
+    
+    def save(self, *args, **kwargs):
+        if not self.invoice_number:
+            from django.utils import timezone
+            now = timezone.now()
+            # Generate invoice number: INV-YYYY-MM-XXXXXX
+            import uuid
+            self.invoice_number = f"INV-{now.year}-{now.month:02d}-{str(uuid.uuid4())[:6].upper()}"
+        
+        # Copy customer details from order if not set
+        if self.order and not self.customer_name:
+            self.customer_name = self.order.shipping_name
+            self.customer_email = self.order.user.email
+            self.customer_phone = self.order.shipping_phone
+            self.customer_address = f"{self.order.shipping_address}, {self.order.shipping_city}, {self.order.shipping_country}"
+            
+            # Copy amounts from order
+            self.subtotal = self.order.subtotal
+            self.tax_amount = self.order.tax_amount
+            self.discount_amount = self.order.discount_amount
+            self.shipping_amount = self.order.shipping_cost
+            self.total_amount = self.order.total_amount
+        
         super().save(*args, **kwargs)
 
 

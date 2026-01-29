@@ -1,0 +1,150 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Reschedule Appointment - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-alt text-primary"></i>
+                        Reschedule Appointment
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Current Appointment Details -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Current Appointment</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Date:</strong> {{ appointment.appointment_date|date:"F d, Y (l)" }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Time:</strong> {{ appointment.appointment_time|time:"g:i A" }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Doctor Summary -->
+                    <div class="row mb-4 p-3 bg-light rounded">
+                        <div class="col-md-2 text-center">
+                            {% if appointment.doctor.profile_image %}
+                                <img src="{{ appointment.doctor.profile_image.url }}" 
+                                     alt="Dr. {{ appointment.doctor.full_name }}" 
+                                     class="rounded-circle" width="60" height="60">
+                            {% else %}
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="fas fa-user-md text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <h5 class="mb-1">Dr. {{ appointment.doctor.full_name }}</h5>
+                            <p class="mb-1 text-muted">{{ appointment.doctor.get_specialization_display }}</p>
+                            <p class="mb-0"><strong>Hospital:</strong> {{ appointment.doctor.hospital_affiliation }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Reschedule Form -->
+                    <form method="post" id="rescheduleForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Date Selection -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.appointment_date.id_for_label }}" class="form-label">
+                                    New Date <span class="text-danger">*</span>
+                                </label>
+                                {{ form.appointment_date }}
+                                {% if form.appointment_date.errors %}
+                                    <div class="text-danger">{{ form.appointment_date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Time Selection -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.appointment_time.id_for_label }}" class="form-label">
+                                    New Time <span class="text-danger">*</span>
+                                </label>
+                                {{ form.appointment_time }}
+                                {% if form.appointment_time.errors %}
+                                    <div class="text-danger">{{ form.appointment_time.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Form Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Reschedule Policy -->
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-exclamation-triangle"></i> Reschedule Policy</h6>
+                            <ul class="mb-0">
+                                <li>Appointments can be rescheduled up to 2 hours before the original time</li>
+                                <li>You can reschedule an appointment only once</li>
+                                <li>New appointment must be within the next 30 days</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'doctor_appointments:appointment_detail' appointment.id %}" 
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-check"></i> Reschedule Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dateField = document.getElementById('{{ form.appointment_date.id_for_label }}');
+    const timeField = document.getElementById('{{ form.appointment_time.id_for_label }}');
+    
+    dateField.addEventListener('change', function() {
+        const selectedDate = this.value;
+        if (selectedDate) {
+            // Fetch available time slots for selected date
+            fetch(`{% url 'doctor_appointments:get_available_slots' appointment.doctor.id %}?date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear existing options
+                    timeField.innerHTML = '<option value="">Select a time slot</option>';
+                    
+                    // Add new options
+                    data.slots.forEach(slot => {
+                        const option = document.createElement('option');
+                        option.value = slot.value;
+                        option.textContent = slot.display;
+                        timeField.appendChild(option);
+                    });
+                    
+                    if (data.slots.length === 0) {
+                        timeField.innerHTML = '<option value="">No slots available for this date</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching slots:', error);
+                    timeField.innerHTML = '<option value="">Error loading slots</option>';
+                });
+        } else {
+            timeField.innerHTML = '<option value="">Please select a date first</option>';
+        }
+    });
+});
+</script>
+{% endblock %}

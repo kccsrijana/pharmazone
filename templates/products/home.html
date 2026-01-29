@@ -4,41 +4,169 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section position-relative overflow-hidden">
+<section class="hero-section position-relative overflow-hidden" style="background-image: url('/media/hero/pharmacy-background.jpg'); background-size: cover; background-position: center; background-attachment: scroll; min-height: 500px;">
+    <div class="hero-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%); z-index: 1;"></div>
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInLeft">
-                    Your Health, Our Priority
-                </h1>
-                <p class="lead mb-4 animate__animated animate__fadeInLeft animate__delay-1s">
+            <div class="col-lg-7 col-xl-6 offset-lg-1">
+                <h1 class="display-4 fw-bold mb-4 typewriter-text" id="typewriter"></h1>
+                <p class="lead mb-4 slide-in-right">
                     Get quality medicines delivered to your doorstep with Pharmazone - Nepal's trusted online pharmacy.
                 </p>
-                <a href="{% url 'products:medicine_list' %}" class="btn btn-light btn-lg animate__animated animate__fadeInUp animate__delay-2s">
+                <a href="{% url 'products:medicine_list' %}" class="btn btn-light btn-lg slide-in-left">
                     <i class="fas fa-shopping-bag"></i> Shop Now
                 </a>
-                <div class="mt-4">
+                <div class="mt-4 slide-in-up">
                     <span class="badge bg-light text-dark me-2"><i class="fas fa-check text-success"></i> 100% Authentic</span>
                     <span class="badge bg-light text-dark me-2"><i class="fas fa-check text-success"></i> Fast Delivery</span>
                     <span class="badge bg-light text-dark"><i class="fas fa-check text-success"></i> Secure Payment</span>
                 </div>
             </div>
-            <div class="col-lg-6 text-center">
-                <i class="fas fa-pills float-animation" style="font-size: 200px; opacity: 0.3;"></i>
-            </div>
         </div>
-    </div>
-    <!-- Decorative elements -->
-    <div style="position: absolute; top: 10%; right: 5%; opacity: 0.1;">
-        <i class="fas fa-capsules" style="font-size: 100px;"></i>
-    </div>
-    <div style="position: absolute; bottom: 10%; left: 5%; opacity: 0.1;">
-        <i class="fas fa-prescription-bottle" style="font-size: 80px;"></i>
     </div>
 </section>
 
-<!-- Add Animate.css -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<style>
+/* Hero section base styling */
+.hero-section {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    color: white;
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Typewriter Effect */
+.typewriter-text {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    border-right: 3px solid #FFD700;
+    white-space: pre-line;
+    overflow: hidden;
+    font-family: inherit;
+    animation: blink-caret 0.75s step-end infinite;
+    line-height: 1.2;
+    min-height: 1em;
+    margin: 0;
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #FFD700; }
+}
+
+/* Slide Animations */
+.slide-in-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    animation: slideInLeft 1s ease-out 4s forwards;
+}
+
+.slide-in-right {
+    opacity: 0;
+    transform: translateX(50px);
+    animation: slideInRight 1s ease-out 4.5s forwards;
+}
+
+.slide-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideInUp 1s ease-out 5s forwards;
+}
+
+@keyframes slideInLeft {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effects */
+.btn:hover {
+    transform: translateY(-2px);
+    transition: transform 0.3s ease;
+}
+
+.badge:hover {
+    transform: translateY(-1px);
+    transition: transform 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .typewriter-text {
+        font-size: 2rem;
+    }
+    
+    .hero-section i {
+        font-size: 100px;
+    }
+}
+
+@media (max-width: 576px) {
+    .typewriter-text {
+        font-size: 1.5rem;
+    }
+    
+    .hero-section i {
+        font-size: 80px;
+    }
+    
+    .badge {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        width: fit-content;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const text = "Your Health\nOur Priority";
+    const typewriterElement = document.getElementById('typewriter');
+    let i = 0;
+    
+    function typeWriter() {
+        if (i < text.length) {
+            if (text.charAt(i) === '\n') {
+                typewriterElement.innerHTML += '<br>';
+            } else {
+                typewriterElement.innerHTML += text.charAt(i);
+            }
+            i++;
+            setTimeout(typeWriter, 100);
+        } else {
+            // Remove cursor after typing is complete
+            setTimeout(() => {
+                typewriterElement.style.borderRight = 'none';
+            }, 1000);
+        }
+    }
+    
+    typeWriter();
+});
+</script>
 
 <!-- Promotional Banner -->
 <section class="py-3" style="background: linear-gradient(90deg, #60bb46 0%, #4a9636 100%);">

@@ -5,20 +5,472 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Pharmazone - Online Medicine Store{% endblock %}</title>
     
+    <!-- Favicon -->
+    {% load static %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/pharmazone-icon.svg' %}">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
+        /* Layout Structure */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
         .navbar-brand {
             font-weight: bold;
             color: #2c5aa0 !important;
+            font-size: 1.5rem;
+        }
+        
+        /* Top Navigation Bar */
+        .top-navbar {
+            height: 70px;
+            z-index: 1030;
+            border-bottom: 1px solid #e9ecef;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: white !important;
+        }
+        
+        .user-profile-top {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            background-color: #f8f9fa;
+            color: #495057 !important;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile-top:hover {
+            background-color: #e9ecef;
+            color: #2c5aa0 !important;
+        }
+        
+        /* Left Sidebar */
+        .sidebar-container {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            width: 200px;
+            z-index: 1020;
+        }
+        
+        .sidebar {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            /* Custom scrollbar for sidebar */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .sidebar-content {
+            padding: 1.5rem 0;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+        
+        .sidebar-heading {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-nav .nav-item {
+            margin-bottom: 0.2rem;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0.8rem !important;
+            color: #2c3e50 !important;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 0 0.3rem;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-link i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+            margin-right: 0.6rem;
+            color: #667eea;
+        }
+        
+        .sidebar-link span {
+            font-weight: 500;
+            flex: 1;
+        }
+        
+        .sidebar-link:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            color: #2c3e50 !important;
+            transform: translateX(2px);
+        }
+        
+        .sidebar-link:hover i {
+            color: #667eea;
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+        
+        .sidebar-link.active i {
+            color: white;
+        }
+        
+        /* Services section - no icons, clean text */
+        .sidebar-link.service-link {
+            padding: 0.7rem 1rem !important;
+        }
+        
+        .sidebar-link.service-link i {
+            display: none;
+        }
+        
+        .sidebar-link.service-link span {
+            margin-left: 0;
+        }
+        
+        /* Cart Badge in Sidebar */
+        .cart-badge-sidebar {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.15rem 0.35rem;
+            font-size: 0.65rem;
+            font-weight: bold;
+            min-width: 16px;
+            text-align: center;
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            margin-left: 200px;
+            margin-top: 70px;
+            min-height: calc(100vh - 70px);
+            background-color: #f8f9fa;
+            padding: 0;
+        }
+        
+        /* Remove default padding from main content containers */
+        .main-content .container,
+        .main-content .container-fluid {
+            padding-top: 0;
+        }
+        
+        /* Hero section adjustments */
+        .hero-section {
+            margin-top: 0 !important;
+            padding-top: 80px;
+        }
+        
+        /* Ensure no gaps in main content */
+        .main-content > section:first-child,
+        .main-content > .container:first-child,
+        .main-content > .container-fluid:first-child {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        
+        /* Special handling for hero sections */
+        .main-content .hero-section {
+            margin-top: 0 !important;
+        }
+        
+        /* Search Container in Top Bar */
+        .search-container {
+            position: relative;
+            min-width: 300px;
+        }
+        
+        .search-input-group {
+            display: flex;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 25px;
+            overflow: hidden;
+            background-color: white;
+        }
+        
+        .search-input {
+            border: none;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            flex: 1;
+            outline: none;
+        }
+        
+        .search-btn {
+            border: none;
+            background-color: #2c5aa0;
+            color: white;
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background-color: #1e3d6f;
+        }
+        
+        /* Search Suggestions */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .search-suggestion {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .search-suggestion:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Dropdown Improvements */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+        }
+        
+        .dropdown-item {
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #2c5aa0;
+        }
+        
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 991.98px) {
+            .sidebar-container {
+                position: fixed;
+                top: 70px;
+                left: -200px;
+                transition: left 0.3s ease;
+                z-index: 1040;
+                height: calc(100vh - 70px);
+            }
+            
+            .sidebar-container.show {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .search-container {
+                min-width: 200px;
+            }
+            
+            /* Mobile overlay */
+            .sidebar-overlay {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100vw;
+                height: calc(100vh - 70px);
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1035;
+                display: none;
+            }
+            
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .search-container {
+                min-width: 150px;
+            }
+            
+            .search-input {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .search-btn {
+                padding: 0.5rem 0.8rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .top-navbar {
+                height: 60px;
+            }
+            
+            .sidebar-container {
+                top: 60px;
+                height: calc(100vh - 60px);
+            }
+            
+            .main-content {
+                margin-top: 60px;
+                min-height: calc(100vh - 60px);
+            }
+            
+            .sidebar-overlay {
+                top: 60px;
+                height: calc(100vh - 60px);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-container {
+                min-width: 120px;
+            }
+            
+            .user-profile-top span {
+                display: none !important;
+            }
+        }
+        
+        /* Sidebar Mobile Toggle */
+        @media (max-width: 991.98px) {
+            .navbar-toggler {
+                order: -1;
+                margin-right: 1rem;
+                border: none;
+                padding: 0.25rem 0.5rem;
+            }
+            
+            .navbar-toggler:focus {
+                box-shadow: none;
+            }
+        }
+        
+        /* Footer positioning */
+        .footer {
+            margin-left: 200px;
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0;
+            position: relative;
+            z-index: 1;
+            width: calc(100% - 200px);
+        }
+        
+        @media (max-width: 991.98px) {
+            .footer {
+                margin-left: 0;
+                width: 100%;
+            }
         }
         .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: scroll;
             color: white;
             padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+            z-index: 1;
+        }
+        
+        .hero-section .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-image-container {
+            position: relative;
+            z-index: 2;
         }
         .medicine-card {
             transition: transform 0.3s ease;
@@ -74,36 +526,6 @@
         /* Smooth animations */
         * {
             transition: all 0.3s ease;
-        }
-        
-        /* Navbar enhancement */
-        .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .navbar-brand:hover {
-            transform: scale(1.05);
-        }
-        
-        /* Active navigation link - Attractive Mode */
-        .nav-link {
-            position: relative;
-            transition: all 0.3s ease;
-            padding: 8px 16px !important;
-            border-radius: 8px;
-            margin: 0 4px;
-        }
-        
-        .nav-link.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white !important;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transform: translateY(-2px);
-        }
-        
-        .nav-link:hover {
-            color: #667eea !important;
         }
         
         /* Button hover effects */
@@ -225,106 +647,246 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'products:home' %}">
-                <i class="fas fa-pills"></i> Pharmazone
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm top-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'products:home' %}">
+                {% load static %}
+                <img src="{% static 'images/pharmazone-logo-small.svg' %}" alt="Pharmazone Logo" height="50">
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <!-- Mobile Menu Toggle -->
+            <button class="navbar-toggler border-0 d-lg-none" type="button" onclick="toggleSidebar()">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active fw-bold{% endif %}" href="{% url 'products:home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'medicine_list' or request.resolver_match.url_name == 'medicine_detail' %}active fw-bold{% endif %}" href="{% url 'products:medicine_list' %}">Medicines</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'category_list' or request.resolver_match.url_name == 'category_detail' %}active fw-bold{% endif %}" href="{% url 'products:category_list' %}">Categories</a>
-                    </li>
-                </ul>
-                
+            <!-- Top Navigation Items -->
+            <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
                 <!-- Search Box -->
-                <form class="d-flex me-3 search-box" method="GET" action="{% url 'products:medicine_list' %}">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Search medicines..." 
-                           value="{{ request.GET.search }}" id="searchInput">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <div class="search-suggestions" id="searchSuggestions"></div>
-                </form>
+                <div class="search-container me-3">
+                    <form class="search-form" method="GET" action="{% url 'products:medicine_list' %}">
+                        <div class="search-input-group">
+                            <input class="search-input" type="search" name="search" placeholder="Search medicines..." 
+                                   value="{{ request.GET.search }}" id="searchInput">
+                            <button class="search-btn" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="search-suggestions" id="searchSuggestions"></div>
+                    </form>
+                </div>
                 
                 <!-- User Menu -->
-                <ul class="navbar-nav">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'cart:cart' %}">
-                                <i class="fas fa-shopping-cart"></i> Cart 
-                                <span class="badge bg-primary" id="cartCount">0</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'orders:order_list' %}">
-                                <i class="fas fa-box"></i> Orders
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user"></i> {{ user.username }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
-                                {% if user.is_staff %}
-                                    <li><a class="dropdown-item" href="/admin/">Admin Panel</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">Manage Orders</a></li>
-                                {% elif user.user_type == 'pharmacy' %}
-                                    <li><a class="dropdown-item" href="{% url 'accounts:pharmacy_dashboard' %}">Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">Manage Orders</a></li>
-                                {% elif user.user_type == 'customer' %}
-                                    <li><a class="dropdown-item" href="{% url 'accounts:customer_dashboard' %}">Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'orders:shipping_addresses' %}">Delivery Addresses</a></li>
-                                {% endif %}
-                                {% if user.is_staff or user.user_type == 'pharmacy' or user.user_type == 'customer' %}
-                                    <li><hr class="dropdown-divider"></li>
-                                {% endif %}
+                {% if user.is_authenticated %}
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle user-profile-top" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span class="d-none d-md-inline">{{ user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                                <i class="fas fa-user-circle me-2"></i>Profile
+                            </a></li>
+                            {% if user.is_staff %}
+                                <li><a class="dropdown-item" href="{% url 'doctor_appointments:admin_dashboard' %}">
+                                    <i class="fas fa-cog me-2"></i>Admin Dashboard
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">
+                                    <i class="fas fa-tasks me-2"></i>Manage Orders
+                                </a></li>
+                            {% elif user.user_type == 'pharmacy' %}
+                                <li><a class="dropdown-item" href="{% url 'accounts:pharmacy_dashboard' %}">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">
+                                    <i class="fas fa-tasks me-2"></i>Manage Orders
+                                </a></li>
+                            {% elif user.user_type == 'customer' %}
+                                <li><a class="dropdown-item" href="{% url 'accounts:customer_dashboard' %}">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'orders:order_list' %}">
+                                    <i class="fas fa-box me-2"></i>My Orders
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'payments:invoice_list' %}">
+                                    <i class="fas fa-file-invoice me-2"></i>My Invoices
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'doctor_appointments:my_appointments' %}">
+                                    <i class="fas fa-calendar-check me-2"></i>My Appointments
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'orders:shipping_addresses' %}">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Delivery Addresses
+                                </a></li>
+                            {% endif %}
+                            {% if user.is_staff or user.user_type == 'pharmacy' or user.user_type == 'customer' %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
-                        </li>
-                    {% endif %}
-                </ul>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class="btn btn-outline-primary me-2" href="{% url 'accounts:login' %}">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                    <a class="btn btn-primary" href="{% url 'accounts:signup' %}">
+                        <i class="fas fa-user-plus me-1"></i>Sign Up
+                    </a>
+                {% endif %}
             </div>
         </div>
     </nav>
 
-    <!-- Messages -->
-    {% if messages %}
-        <div class="container mt-3">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <!-- Left Sidebar Navigation -->
+    <div class="sidebar-container" id="sidebarContainer">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- Main Navigation -->
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">Main Menu</h6>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'products:home' %}">
+                                <i class="fas fa-home"></i>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'medicine_list' or request.resolver_match.url_name == 'medicine_detail' %}active{% endif %}" href="{% url 'products:medicine_list' %}">
+                                <i class="fas fa-pills"></i>
+                                <span>Medicines</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'category_list' or request.resolver_match.url_name == 'category_detail' %}active{% endif %}" href="{% url 'products:category_list' %}">
+                                <i class="fas fa-th-large"></i>
+                                <span>Categories</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Services Section (not for admin users) -->
+                {% if not user.is_staff or user.username != 'admin' %}
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">Services</h6>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link service-link {% if request.resolver_match.app_name == 'doctor_appointments' %}active{% endif %}" href="{% url 'doctor_appointments:doctor_list' %}">
+                                <span>Book Appointment</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link service-link {% if request.resolver_match.app_name == 'pharmacist_chat' %}active{% endif %}" href="{% url 'pharmacist_chat:home' %}">
+                                <span>Ask Pharmacist</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- User Actions (if authenticated and not admin) -->
+                {% if user.is_authenticated and not user.is_staff and user.username != 'admin' %}
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">My Account</h6>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link position-relative {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" href="{% url 'cart:cart' %}">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Cart</span>
+                                <span class="cart-badge-sidebar" id="cartCountSidebar">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'order_list' or request.resolver_match.url_name == 'order_detail' %}active{% endif %}" href="{% url 'orders:order_list' %}">
+                                <i class="fas fa-box"></i>
+                                <span>My Orders</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'invoice_list' or request.resolver_match.url_name == 'invoice_detail' %}active{% endif %}" href="{% url 'payments:invoice_list' %}">
+                                <i class="fas fa-file-invoice"></i>
+                                <span>My Invoices</span>
+                            </a>
+                        </li>
+                        {% if user.user_type == 'customer' %}
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'my_appointments' or request.resolver_match.url_name == 'appointment_detail' %}active{% endif %}" href="{% url 'doctor_appointments:my_appointments' %}">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>My Appointments</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Admin Section (only for secure admin user) -->
+                {% if user.is_staff and user.username == 'admin' %}
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">Admin Panel</h6>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}" href="{% url 'doctor_appointments:admin_dashboard' %}">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if 'admin_medicine' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'products:admin_medicine_list' %}">
+                                <i class="fas fa-pills"></i>
+                                <span>Manage Medicines</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'admin_appointment_list' %}active{% endif %}" href="{% url 'doctor_appointments:admin_appointment_list' %}">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Manage Appointments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'admin_order_list' or request.resolver_match.url_name == 'admin_order_detail' %}active{% endif %}" href="{% url 'orders:admin_order_list' %}">
+                                <i class="fas fa-shopping-bag"></i>
+                                <span>Manage Orders</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link sidebar-link {% if request.resolver_match.url_name == 'invoice_list' or request.resolver_match.url_name == 'invoice_detail' %}active{% endif %}" href="{% url 'payments:invoice_list' %}">
+                                <i class="fas fa-file-invoice"></i>
+                                <span>All Invoices</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Messages -->
+        {% if messages %}
+            <div class="container-fluid" style="margin-top: 0; padding-top: 1rem;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Page Content -->
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
 
     <!-- Back to Top Button -->
     <button id="backToTop" class="btn btn-primary" style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 1000; border-radius: 50%; width: 50px; height: 50px;">
@@ -336,7 +898,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <h5><i class="fas fa-pills"></i> Pharmazone</h5>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{% static 'images/pharmazone-logo-small.svg' %}" alt="Pharmazone Logo" height="30" style="filter: brightness(0) invert(1);">
+                    </div>
                     <p>Your trusted online pharmacy for quality medicines and healthcare products.</p>
                     <div class="mt-3">
                         <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-2x"></i></a>
@@ -354,8 +918,8 @@
                 </div>
                 <div class="col-md-4">
                     <h5>Contact Info</h5>
-                    <p><i class="fas fa-phone"></i> +977 9762607501</p>
-                    <p><i class="fas fa-envelope"></i> info@pharmazone.com</p>
+                    <p><i class="fas fa-phone"></i> +977-1-4567890</p>
+                    <p><i class="fas fa-envelope"></i> info@pharmazone.com.np</p>
                     <p><i class="fas fa-map-marker-alt"></i> Kathmandu, Nepal</p>
                 </div>
             </div>
@@ -416,7 +980,7 @@
             
             // Hide suggestions when clicking outside
             $(document).on('click', function(e) {
-                if (!$(e.target).closest('.search-box').length) {
+                if (!$(e.target).closest('.search-container').length) {
                     $('#searchSuggestions').hide();
                 }
             });
@@ -427,6 +991,7 @@
                     $.get('{% url "cart:cart_count" %}')
                         .done(function(data) {
                             $('#cartCount').text(data.count);
+                            $('#cartCountSidebar').text(data.count);
                         });
                 {% endif %}
             }
@@ -435,6 +1000,80 @@
             
             // Update cart count every 30 seconds
             setInterval(updateCartCount, 30000);
+            
+            // Sidebar toggle for mobile
+            function toggleSidebar() {
+                const sidebarContainer = document.getElementById('sidebarContainer');
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+                
+                sidebarContainer.classList.toggle('show');
+                sidebarOverlay.classList.toggle('show');
+            }
+            
+            function closeSidebar() {
+                const sidebarContainer = document.getElementById('sidebarContainer');
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+                
+                sidebarContainer.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+            }
+            
+            // Make functions global
+            window.toggleSidebar = toggleSidebar;
+            window.closeSidebar = closeSidebar;
+            
+            // Close sidebar when clicking outside on mobile
+            $(document).on('click', function(e) {
+                if ($(window).width() < 992) {
+                    if (!$(e.target).closest('.sidebar-container, .navbar-toggler').length) {
+                        closeSidebar();
+                    }
+                }
+            });
+            
+            // Handle window resize
+            $(window).on('resize', function() {
+                if ($(window).width() >= 992) {
+                    closeSidebar();
+                }
+            });
+            
+            // Prevent body scroll when sidebar is open on mobile
+            function toggleBodyScroll(disable) {
+                if (disable) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+            
+            // Update toggle function to handle body scroll
+            window.toggleSidebar = function() {
+                const sidebarContainer = document.getElementById('sidebarContainer');
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+                const isOpen = sidebarContainer.classList.contains('show');
+                
+                if (isOpen) {
+                    sidebarContainer.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                    toggleBodyScroll(false);
+                } else {
+                    sidebarContainer.classList.add('show');
+                    sidebarOverlay.classList.add('show');
+                    if (window.innerWidth < 992) {
+                        toggleBodyScroll(true);
+                    }
+                }
+            };
+            
+            window.closeSidebar = function() {
+                const sidebarContainer = document.getElementById('sidebarContainer');
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+                
+                sidebarContainer.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+                toggleBodyScroll(false);
+            };
             
             // Back to Top button
             const backToTopBtn = document.getElementById('backToTop');

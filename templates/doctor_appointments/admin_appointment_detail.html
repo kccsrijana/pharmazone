@@ -1,0 +1,272 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Admin - Appointment #{{ appointment.id }} - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-royal-blue mb-1">Appointment #{{ appointment.id }}</h2>
+                    <p class="text-muted mb-0">Manage appointment details and status</p>
+                </div>
+                <div>
+                    <a href="{% url 'doctor_appointments:admin_appointment_list' %}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                    <a href="{% url 'doctor_appointments:admin_dashboard' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Appointment Details -->
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-calendar-check me-2"></i>Appointment Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Patient Information</h6>
+                                    <p class="mb-1"><strong>Name:</strong> {{ appointment.patient.get_full_name|default:appointment.patient.username }}</p>
+                                    <p class="mb-1"><strong>Email:</strong> {{ appointment.patient.email }}</p>
+                                    <p class="mb-1"><strong>Age:</strong> {{ appointment.patient_age }} years</p>
+                                    <p class="mb-3"><strong>Gender:</strong> {{ appointment.get_patient_gender_display }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Doctor Information</h6>
+                                    <p class="mb-1"><strong>Name:</strong> Dr. {{ appointment.doctor.full_name }}</p>
+                                    <p class="mb-1"><strong>Specialization:</strong> {{ appointment.doctor.get_specialization_display }}</p>
+                                    <p class="mb-1"><strong>Hospital:</strong> {{ appointment.doctor.hospital_affiliation|default:"Not specified" }}</p>
+                                    <p class="mb-3"><strong>Fee:</strong> Rs. {{ appointment.fee }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Appointment Details</h6>
+                                    <p class="mb-1"><strong>Date:</strong> {{ appointment.appointment_date|date:"F d, Y (l)" }}</p>
+                                    <p class="mb-1"><strong>Time:</strong> {{ appointment.appointment_time|time:"g:i A" }}</p>
+                                    <p class="mb-1"><strong>Duration:</strong> {{ appointment.duration_minutes }} minutes</p>
+                                    <p class="mb-3"><strong>Type:</strong> {{ appointment.get_appointment_type_display }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Status & Timestamps</h6>
+                                    <p class="mb-1">
+                                        <strong>Status:</strong> 
+                                        {% if appointment.status == 'pending' %}
+                                            <span class="badge bg-warning">{{ appointment.get_status_display }}</span>
+                                        {% elif appointment.status == 'confirmed' %}
+                                            <span class="badge bg-info">{{ appointment.get_status_display }}</span>
+                                        {% elif appointment.status == 'completed' %}
+                                            <span class="badge bg-success">{{ appointment.get_status_display }}</span>
+                                        {% elif appointment.status == 'cancelled' %}
+                                            <span class="badge bg-danger">{{ appointment.get_status_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ appointment.get_status_display }}</span>
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-1"><strong>Created:</strong> {{ appointment.created_at|date:"M d, Y g:i A" }}</p>
+                                    {% if appointment.confirmed_at %}
+                                        <p class="mb-1"><strong>Confirmed:</strong> {{ appointment.confirmed_at|date:"M d, Y g:i A" }}</p>
+                                    {% endif %}
+                                    {% if appointment.completed_at %}
+                                        <p class="mb-1"><strong>Completed:</strong> {{ appointment.completed_at|date:"M d, Y g:i A" }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Information -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-stethoscope me-2"></i>Medical Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="text-muted">Chief Complaint</h6>
+                                    <p class="mb-3">{{ appointment.chief_complaint }}</p>
+                                </div>
+                            </div>
+
+                            {% if appointment.symptoms %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-muted">Symptoms</h6>
+                                        <p class="mb-3">{{ appointment.symptoms }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if appointment.medical_history %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-muted">Medical History</h6>
+                                        <p class="mb-3">{{ appointment.medical_history }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if appointment.current_medications %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-muted">Current Medications</h6>
+                                        <p class="mb-3">{{ appointment.current_medications }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if appointment.allergies %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-muted">Allergies</h6>
+                                        <p class="mb-3">{{ appointment.allergies }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if appointment.doctor_notes %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-muted">Doctor Notes</h6>
+                                        <div class="bg-light p-3 rounded">
+                                            <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;">{{ appointment.doctor_notes }}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Status Management -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cogs me-2"></i>Status Management
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="{% url 'doctor_appointments:admin_update_appointment_status' appointment.id %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label">Update Status</label>
+                                    <select name="status" class="form-select" required>
+                                        {% for status_code, status_name in appointment.STATUS_CHOICES %}
+                                            <option value="{{ status_code }}" {% if appointment.status == status_code %}selected{% endif %}>
+                                                {{ status_name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Admin Notes (Optional)</label>
+                                    <textarea name="admin_notes" class="form-control" rows="3" placeholder="Add any notes about this status change..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-save me-2"></i>Update Status
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bolt me-2"></i>Quick Actions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if can_confirm %}
+                                <form method="post" action="{% url 'doctor_appointments:admin_update_appointment_status' appointment.id %}" class="mb-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="confirmed">
+                                    <button type="submit" class="btn btn-info w-100">
+                                        <i class="fas fa-check me-2"></i>Confirm Appointment
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                            {% if can_complete %}
+                                <form method="post" action="{% url 'doctor_appointments:admin_update_appointment_status' appointment.id %}" class="mb-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="completed">
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="fas fa-check-circle me-2"></i>Mark Completed
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                            {% if can_cancel %}
+                                <form method="post" action="{% url 'doctor_appointments:admin_update_appointment_status' appointment.id %}" class="mb-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="cancelled">
+                                    <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                        <i class="fas fa-times me-2"></i>Cancel Appointment
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                            {% if appointment.status in 'pending,confirmed' %}
+                                <a href="{% url 'doctor_appointments:admin_reschedule_appointment' appointment.id %}" class="btn btn-warning w-100">
+                                    <i class="fas fa-calendar-alt me-2"></i>Reschedule
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    {% if appointment.payment %}
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-credit-card me-2"></i>Payment Information
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-1"><strong>Amount:</strong> Rs. {{ appointment.payment.amount }}</p>
+                                <p class="mb-1"><strong>Method:</strong> {{ appointment.payment.get_payment_method_display }}</p>
+                                <p class="mb-1">
+                                    <strong>Status:</strong> 
+                                    {% if appointment.payment.payment_status == 'paid' %}
+                                        <span class="badge bg-success">Paid</span>
+                                    {% elif appointment.payment.payment_status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Failed</span>
+                                    {% endif %}
+                                </p>
+                                {% if appointment.payment.paid_at %}
+                                    <p class="mb-1"><strong>Paid At:</strong> {{ appointment.payment.paid_at|date:"M d, Y g:i A" }}</p>
+                                {% endif %}
+                                {% if appointment.payment.transaction_id %}
+                                    <p class="mb-1"><strong>Transaction ID:</strong> {{ appointment.payment.transaction_id }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-royal-blue {
+    color: #4169E1 !important;
+}
+</style>
+{% endblock %}

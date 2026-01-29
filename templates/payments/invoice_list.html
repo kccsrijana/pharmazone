@@ -1,0 +1,537 @@
+{% extends 'base/base.html' %}
+
+{% block title %}My Invoices - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Modern Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <h2 class="title">
+                            <i class="fas fa-file-invoice-dollar text-primary"></i>
+                            My Invoices
+                        </h2>
+                        <p class="subtitle">Manage and download your invoice documents</p>
+                    </div>
+                    <div class="header-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">{{ invoices.count }}</div>
+                            <div class="stat-label">Total Invoices</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="invoices-container">
+                {% if invoices %}
+                <!-- Modern Invoice Grid -->
+                <div class="invoices-grid">
+                    {% for invoice in invoices %}
+                    <div class="invoice-card">
+                        <div class="invoice-card-header">
+                            <div class="invoice-number">
+                                <i class="fas fa-hashtag text-primary"></i>
+                                {{ invoice.invoice_number }}
+                            </div>
+                            <div class="invoice-status">
+                                <span class="status-badge status-{{ invoice.status }}">
+                                    {{ invoice.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="invoice-card-body">
+                            <div class="invoice-info">
+                                <div class="info-row">
+                                    <span class="info-label">
+                                        <i class="fas fa-box text-primary"></i>
+                                        Order
+                                    </span>
+                                    <a href="{% url 'orders:order_detail' invoice.order.id %}" class="info-value order-link">
+                                        {{ invoice.order.order_number }}
+                                    </a>
+                                </div>
+                                
+                                <div class="info-row">
+                                    <span class="info-label">
+                                        <i class="fas fa-calendar text-primary"></i>
+                                        Date
+                                    </span>
+                                    <span class="info-value">{{ invoice.issue_date|date:"M d, Y" }}</span>
+                                </div>
+                                
+                                <div class="info-row">
+                                    <span class="info-label">
+                                        <i class="fas fa-credit-card text-primary"></i>
+                                        Payment
+                                    </span>
+                                    <span class="info-value">{{ invoice.order.get_payment_method_display }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="invoice-amount">
+                                <div class="amount-label">Total Amount</div>
+                                <div class="amount-value">Rs. {{ invoice.total_amount|floatformat:2 }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="invoice-card-footer">
+                            <div class="action-buttons">
+                                <a href="{% url 'payments:invoice_detail' invoice.id %}" class="btn btn-outline-primary btn-sm btn-modern" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                    <span class="btn-text">View</span>
+                                </a>
+                                <a href="{% url 'payments:view_invoice_pdf' invoice.id %}" class="btn btn-outline-info btn-sm btn-modern" target="_blank" title="View PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span class="btn-text">PDF</span>
+                                </a>
+                                <a href="{% url 'payments:download_invoice_pdf' invoice.id %}" class="btn btn-primary btn-sm btn-modern" title="Download PDF">
+                                    <i class="fas fa-download"></i>
+                                    <span class="btn-text">Download</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Alternative Table View for Desktop -->
+                <div class="table-view d-none d-lg-block mt-4">
+                    <div class="modern-table-container">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice Details</th>
+                                    <th>Order</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for invoice in invoices %}
+                                <tr class="table-row">
+                                    <td>
+                                        <div class="invoice-details">
+                                            <strong class="invoice-number">{{ invoice.invoice_number }}</strong>
+                                            <small class="payment-method">{{ invoice.order.get_payment_method_display }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'orders:order_detail' invoice.order.id %}" class="order-link">
+                                            {{ invoice.order.order_number }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="date-value">{{ invoice.issue_date|date:"M d, Y" }}</span>
+                                    </td>
+                                    <td>
+                                        <strong class="amount-value">Rs. {{ invoice.total_amount|floatformat:2 }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-{{ invoice.status }}">
+                                            {{ invoice.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <a href="{% url 'payments:invoice_detail' invoice.id %}" class="btn btn-outline-primary btn-sm btn-modern" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'payments:view_invoice_pdf' invoice.id %}" class="btn btn-outline-info btn-sm btn-modern" target="_blank" title="View PDF">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                            <a href="{% url 'payments:download_invoice_pdf' invoice.id %}" class="btn btn-primary btn-sm btn-modern" title="Download PDF">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                {% else %}
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-file-invoice fa-4x"></i>
+                    </div>
+                    <h4 class="empty-title">No Invoices Found</h4>
+                    <p class="empty-description">
+                        You don't have any invoices yet. Complete an order to get your first invoice!
+                    </p>
+                    <a href="{% url 'products:home' %}" class="btn btn-primary btn-modern btn-lg">
+                        <i class="fas fa-shopping-cart"></i>
+                        Start Shopping
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modern Invoice List Styles */
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+}
+
+.subtitle {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.header-stats {
+    text-align: center;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    color: white;
+}
+
+.invoices-container {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+/* Grid Layout for Mobile/Tablet */
+.invoices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.invoice-card {
+    background: #f8faff;
+    border: 1px solid #e3ebf3;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.invoice-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+}
+
+.invoice-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.invoice-number {
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.invoice-card-body {
+    padding: 1.5rem;
+}
+
+.invoice-info {
+    margin-bottom: 1.5rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.info-value {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.order-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.3s ease;
+}
+
+.order-link:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.invoice-amount {
+    background: linear-gradient(135deg, #e3ebf3 0%, #f8faff 100%);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.amount-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.amount-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #28a745;
+}
+
+.invoice-card-footer {
+    padding: 1rem 1.5rem;
+    background: white;
+    border-top: 1px solid #e9ecef;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.btn-modern {
+    border-radius: 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-text {
+    font-size: 0.85rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-paid {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-sent {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-draft {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Table View Styles */
+.modern-table-container {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.modern-table {
+    width: 100%;
+    margin: 0;
+}
+
+.modern-table thead th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+.modern-table tbody td {
+    padding: 1.25rem;
+    border-bottom: 1px solid #f1f3f4;
+    vertical-align: middle;
+}
+
+.table-row:hover {
+    background-color: #f8faff;
+}
+
+.invoice-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.payment-method {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.date-value {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    color: #e9ecef;
+    margin-bottom: 2rem;
+}
+
+.empty-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.empty-description {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .title {
+        font-size: 2rem;
+    }
+    
+    .invoices-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .invoice-card-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-modern {
+        justify-content: center;
+    }
+    
+    .invoices-container {
+        padding: 1rem;
+    }
+    
+    .page-header {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-text {
+        display: none;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    
+    .btn-modern {
+        flex: 1;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}

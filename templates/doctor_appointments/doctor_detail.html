@@ -1,0 +1,183 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Dr. {{ doctor.full_name }} - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Doctor Profile -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if doctor.profile_image %}
+                        <img src="{{ doctor.profile_image.url }}" alt="Dr. {{ doctor.full_name }}" 
+                             class="rounded-circle mb-3" width="120" height="120">
+                    {% else %}
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
+                             style="width: 120px; height: 120px;">
+                            <i class="fas fa-user-md text-white fa-3x"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <h4 class="card-title">Dr. {{ doctor.full_name }}</h4>
+                    <p class="text-muted mb-2">{{ doctor.get_specialization_display }}</p>
+                    
+                    <div class="d-flex justify-content-center align-items-center mb-3">
+                        <div class="text-warning me-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= doctor.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="text-muted">({{ doctor.total_appointments }} appointments)</span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="badge bg-success fs-6">Rs. {{ doctor.consultation_fee }}</span>
+                        <small class="text-muted d-block">Consultation Fee</small>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <a href="{% url 'doctor_appointments:book_appointment' doctor.id %}" 
+                           class="btn btn-primary">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Doctor Info -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Doctor Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>Experience:</strong> {{ doctor.experience_years }} years
+                    </div>
+                    <div class="mb-2">
+                        <strong>Qualification:</strong> {{ doctor.qualification }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>License:</strong> {{ doctor.license_number }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>Hospital:</strong> {{ doctor.hospital_affiliation }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>Phone:</strong> {{ doctor.phone_number }}
+                    </div>
+                    <div>
+                        <strong>Email:</strong> {{ doctor.email }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Schedule and Availability -->
+        <div class="col-lg-8">
+            <!-- About Doctor -->
+            {% if doctor.bio %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-user"></i> About Dr. {{ doctor.full_name }}</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ doctor.bio }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Weekly Schedule -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-calendar-week"></i> Weekly Schedule & Availability</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for day_schedule in weekly_schedule %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="border rounded p-3 {% if day_schedule.is_today %}bg-light{% endif %}">
+                                    <h6 class="mb-2">
+                                        {{ day_schedule.day_name }}
+                                        {% if day_schedule.is_today %}
+                                            <span class="badge bg-primary">Today</span>
+                                        {% endif %}
+                                    </h6>
+                                    <small class="text-muted d-block mb-2">{{ day_schedule.date_str }}</small>
+                                    
+                                    {% if day_schedule.schedules %}
+                                        {% for schedule in day_schedule.schedules %}
+                                            <div class="mb-2">
+                                                <i class="fas fa-clock text-primary"></i>
+                                                {{ schedule.start_time|time:"g:i A" }} - {{ schedule.end_time|time:"g:i A" }}
+                                            </div>
+                                        {% endfor %}
+                                        
+                                        {% if day_schedule.total_slots > 0 %}
+                                            <div class="mt-2">
+                                                <span class="badge bg-success">
+                                                    {{ day_schedule.total_slots }} slot{{ day_schedule.total_slots|pluralize }} available
+                                                </span>
+                                            </div>
+                                        {% else %}
+                                            <div class="mt-2">
+                                                <span class="badge bg-warning text-dark">Fully booked</span>
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="text-muted">
+                                            <i class="fas fa-times-circle"></i> Not available
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Patient Reviews -->
+            {% if reviews %}
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-star"></i> Patient Reviews</h6>
+                </div>
+                <div class="card-body">
+                    {% for review in reviews %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <strong>{{ review.patient.first_name }} {{ review.patient.last_name|first }}.</strong>
+                                    <div class="text-warning">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                            </div>
+                            {% if review.review_text %}
+                                <p class="mb-2">{{ review.review_text }}</p>
+                            {% endif %}
+                            {% if review.would_recommend %}
+                                <small class="text-success">
+                                    <i class="fas fa-thumbs-up"></i> Would recommend
+                                </small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,264 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ medicine.name }} - Admin - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-pills text-primary"></i> {{ medicine.name }}</h2>
+                <div>
+                    <a href="{% url 'products:admin_medicine_edit' medicine.id %}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit Medicine
+                    </a>
+                    <a href="{% url 'products:admin_medicine_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- Medicine Image and Basic Info -->
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            {% if medicine.image %}
+                                <img src="{{ medicine.image.url }}" alt="{{ medicine.name }}" 
+                                     class="img-fluid rounded mb-3" style="max-height: 300px;">
+                            {% else %}
+                                <div class="bg-light d-flex align-items-center justify-content-center rounded mb-3" 
+                                     style="height: 300px;">
+                                    <i class="fas fa-pills fa-5x text-muted"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <h4>{{ medicine.name }}</h4>
+                            {% if medicine.strength %}
+                                <p class="text-muted">{{ medicine.strength }}</p>
+                            {% endif %}
+                            {% if medicine.generic_name %}
+                                <p class="text-info"><strong>Generic:</strong> {{ medicine.generic_name }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Status and Actions -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Status & Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                {% if medicine.is_active %}
+                                    <span class="badge bg-success fs-6">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary fs-6">Inactive</span>
+                                {% endif %}
+                                
+                                {% if medicine.is_featured %}
+                                    <span class="badge bg-primary fs-6">Featured</span>
+                                {% endif %}
+                                
+                                {% if medicine.requires_prescription %}
+                                    <span class="badge bg-warning fs-6">Prescription Required</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'products:admin_medicine_toggle_status' medicine.id %}" 
+                                   class="btn btn-outline-{% if medicine.is_active %}warning{% else %}success{% endif %}">
+                                    <i class="fas fa-{% if medicine.is_active %}pause{% else %}play{% endif %}"></i>
+                                    {% if medicine.is_active %}Deactivate{% else %}Activate{% endif %}
+                                </a>
+                                
+                                <a href="{% url 'products:admin_medicine_toggle_featured' medicine.id %}" 
+                                   class="btn btn-outline-{% if medicine.is_featured %}secondary{% else %}primary{% endif %}">
+                                    <i class="fas fa-star"></i>
+                                    {% if medicine.is_featured %}Remove from Featured{% else %}Make Featured{% endif %}
+                                </a>
+                                
+                                <a href="{% url 'products:admin_medicine_delete' medicine.id %}" 
+                                   class="btn btn-outline-danger">
+                                    <i class="fas fa-trash"></i> Delete Medicine
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Medicine Details -->
+                <div class="col-lg-8">
+                    <!-- Basic Information -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-info-circle"></i> Basic Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Category:</strong> {{ medicine.category.name }}</p>
+                                    <p><strong>Manufacturer:</strong> {{ medicine.manufacturer.name }}</p>
+                                    <p><strong>Prescription Type:</strong> {{ medicine.get_prescription_type_display }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    {% if medicine.dosage_form %}
+                                        <p><strong>Dosage Form:</strong> {{ medicine.dosage_form }}</p>
+                                    {% endif %}
+                                    {% if medicine.pack_size %}
+                                        <p><strong>Pack Size:</strong> {{ medicine.pack_size }}</p>
+                                    {% endif %}
+                                    {% if medicine.expiry_date %}
+                                        <p><strong>Expiry Date:</strong> {{ medicine.expiry_date|date:"M d, Y" }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            {% if medicine.description %}
+                                <div class="mt-3">
+                                    <strong>Description:</strong>
+                                    <p>{{ medicine.description }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing and Inventory -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-dollar-sign"></i> Pricing & Inventory</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h6>Price</h6>
+                                    {% if medicine.discount_price %}
+                                        <p class="text-success fs-4 fw-bold mb-0">Rs. {{ medicine.discount_price }}</p>
+                                        <p class="text-muted text-decoration-line-through">Rs. {{ medicine.price }}</p>
+                                        <small class="badge bg-success">{{ medicine.discount_percentage }}% OFF</small>
+                                    {% else %}
+                                        <p class="fs-4 fw-bold">Rs. {{ medicine.price }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-3">
+                                    <h6>Stock</h6>
+                                    {% if medicine.stock_quantity == 0 %}
+                                        <p class="text-danger fs-5 fw-bold">Out of Stock</p>
+                                    {% elif medicine.stock_quantity <= 10 %}
+                                        <p class="text-warning fs-5 fw-bold">{{ medicine.stock_quantity }} left</p>
+                                        <small class="text-warning">Low Stock!</small>
+                                    {% else %}
+                                        <p class="text-success fs-5 fw-bold">{{ medicine.stock_quantity }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-3">
+                                    <h6>Min Order</h6>
+                                    <p class="fs-5">{{ medicine.min_order_quantity }}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h6>Max Order</h6>
+                                    <p class="fs-5">{{ medicine.max_order_quantity }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Medical Information -->
+                    {% if medicine.composition or medicine.indications or medicine.contraindications or medicine.side_effects %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-prescription-bottle"></i> Medical Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="medicalInfoAccordion">
+                                {% if medicine.composition %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#composition">
+                                            Composition
+                                        </button>
+                                    </h2>
+                                    <div id="composition" class="accordion-collapse collapse show" data-bs-parent="#medicalInfoAccordion">
+                                        <div class="accordion-body">
+                                            {{ medicine.composition }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if medicine.indications %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#indications">
+                                            Indications
+                                        </button>
+                                    </h2>
+                                    <div id="indications" class="accordion-collapse collapse" data-bs-parent="#medicalInfoAccordion">
+                                        <div class="accordion-body">
+                                            {{ medicine.indications }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if medicine.contraindications %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contraindications">
+                                            Contraindications
+                                        </button>
+                                    </h2>
+                                    <div id="contraindications" class="accordion-collapse collapse" data-bs-parent="#medicalInfoAccordion">
+                                        <div class="accordion-body">
+                                            {{ medicine.contraindications }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if medicine.side_effects %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sideEffects">
+                                            Side Effects
+                                        </button>
+                                    </h2>
+                                    <div id="sideEffects" class="accordion-collapse collapse" data-bs-parent="#medicalInfoAccordion">
+                                        <div class="accordion-body">
+                                            {{ medicine.side_effects }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Storage and Metadata -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-archive"></i> Storage & Metadata</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {% if medicine.storage_conditions %}
+                                        <p><strong>Storage Conditions:</strong></p>
+                                        <p>{{ medicine.storage_conditions }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Created:</strong> {{ medicine.created_at|date:"M d, Y H:i" }}</p>
+                                    <p><strong>Last Updated:</strong> {{ medicine.updated_at|date:"M d, Y H:i" }}</p>
+                                    <p><strong>Medicine ID:</strong> #{{ medicine.id }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

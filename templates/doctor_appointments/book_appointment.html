@@ -1,0 +1,244 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Book Appointment with Dr. {{ doctor.full_name }} - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-plus text-primary"></i>
+                        Book Appointment with Dr. {{ doctor.full_name }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Doctor Summary -->
+                    <div class="row mb-4 p-3 bg-light rounded">
+                        <div class="col-md-2 text-center">
+                            {% if doctor.profile_image %}
+                                <img src="{{ doctor.profile_image.url }}" alt="Dr. {{ doctor.full_name }}" 
+                                     class="rounded-circle" width="60" height="60">
+                            {% else %}
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="fas fa-user-md text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <h5 class="mb-1">Dr. {{ doctor.full_name }}</h5>
+                            <p class="mb-1 text-muted">{{ doctor.get_specialization_display }}</p>
+                            <p class="mb-1"><strong>Consultation Fee:</strong> <span class="text-success">Rs. {{ doctor.consultation_fee }}</span></p>
+                            <p class="mb-0"><strong>Hospital:</strong> {{ doctor.hospital_affiliation }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Booking Form -->
+                    <form method="post" id="appointmentForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Date Selection -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.appointment_date.id_for_label }}" class="form-label">
+                                    {{ form.appointment_date.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.appointment_date }}
+                                {% if form.appointment_date.help_text %}
+                                    <div class="form-text">{{ form.appointment_date.help_text }}</div>
+                                {% endif %}
+                                {% if form.appointment_date.errors %}
+                                    <div class="text-danger">{{ form.appointment_date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Time Selection -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.appointment_time.id_for_label }}" class="form-label">
+                                    {{ form.appointment_time.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.appointment_time }}
+                                {% if form.appointment_time.help_text %}
+                                    <div class="form-text">{{ form.appointment_time.help_text }}</div>
+                                {% endif %}
+                                {% if form.appointment_time.errors %}
+                                    <div class="text-danger">{{ form.appointment_time.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Appointment Type -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.appointment_type.id_for_label }}" class="form-label">
+                                    {{ form.appointment_type.label }}
+                                </label>
+                                {{ form.appointment_type }}
+                                {% if form.appointment_type.errors %}
+                                    <div class="text-danger">{{ form.appointment_type.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Patient Age -->
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.patient_age.id_for_label }}" class="form-label">
+                                    {{ form.patient_age.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.patient_age }}
+                                {% if form.patient_age.errors %}
+                                    <div class="text-danger">{{ form.patient_age.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Gender -->
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.patient_gender.id_for_label }}" class="form-label">
+                                    {{ form.patient_gender.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.patient_gender }}
+                                {% if form.patient_gender.errors %}
+                                    <div class="text-danger">{{ form.patient_gender.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Chief Complaint -->
+                        <div class="mb-3">
+                            <label for="{{ form.chief_complaint.id_for_label }}" class="form-label">
+                                {{ form.chief_complaint.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.chief_complaint }}
+                            {% if form.chief_complaint.errors %}
+                                <div class="text-danger">{{ form.chief_complaint.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Symptoms -->
+                        <div class="mb-3">
+                            <label for="{{ form.symptoms.id_for_label }}" class="form-label">
+                                {{ form.symptoms.label }}
+                            </label>
+                            {{ form.symptoms }}
+                            {% if form.symptoms.errors %}
+                                <div class="text-danger">{{ form.symptoms.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Medical History -->
+                        <div class="mb-3">
+                            <label for="{{ form.medical_history.id_for_label }}" class="form-label">
+                                {{ form.medical_history.label }}
+                            </label>
+                            {{ form.medical_history }}
+                            {% if form.medical_history.errors %}
+                                <div class="text-danger">{{ form.medical_history.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Current Medications -->
+                        <div class="mb-3">
+                            <label for="{{ form.current_medications.id_for_label }}" class="form-label">
+                                {{ form.current_medications.label }}
+                            </label>
+                            {{ form.current_medications }}
+                            {% if form.current_medications.errors %}
+                                <div class="text-danger">{{ form.current_medications.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Allergies -->
+                        <div class="mb-4">
+                            <label for="{{ form.allergies.id_for_label }}" class="form-label">
+                                {{ form.allergies.label }}
+                            </label>
+                            {{ form.allergies }}
+                            {% if form.allergies.errors %}
+                                <div class="text-danger">{{ form.allergies.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Form Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'doctor_appointments:doctor_detail' doctor.id %}" 
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Doctor Profile
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-check"></i> Book Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Available Dates Info -->
+            {% if available_dates %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Available Dates</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for date_info in available_dates %}
+                            <div class="col-md-6 col-lg-4 mb-2">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                    <span>{{ date_info.date_str }}</span>
+                                    <span class="badge bg-success">{{ date_info.slot_count }} slot{{ date_info.slot_count|pluralize }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dateField = document.getElementById('{{ form.appointment_date.id_for_label }}');
+    const timeField = document.getElementById('{{ form.appointment_time.id_for_label }}');
+    
+    dateField.addEventListener('change', function() {
+        const selectedDate = this.value;
+        if (selectedDate) {
+            // Fetch available time slots for selected date
+            fetch(`{% url 'doctor_appointments:get_available_slots' doctor.id %}?date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear existing options
+                    timeField.innerHTML = '<option value="">Select a time slot</option>';
+                    
+                    // Add new options
+                    data.slots.forEach(slot => {
+                        const option = document.createElement('option');
+                        option.value = slot.value;
+                        option.textContent = slot.display;
+                        timeField.appendChild(option);
+                    });
+                    
+                    if (data.slots.length === 0) {
+                        timeField.innerHTML = '<option value="">No slots available for this date</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching slots:', error);
+                    timeField.innerHTML = '<option value="">Error loading slots</option>';
+                });
+        } else {
+            timeField.innerHTML = '<option value="">Please select a date first</option>';
+        }
+    });
+});
+</script>
+{% endblock %}

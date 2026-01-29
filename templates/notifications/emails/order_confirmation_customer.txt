@@ -1,0 +1,46 @@
+{{ site_name }} - Order Confirmation
+
+✅ Your order has been successfully placed!
+
+Dear {{ customer.get_full_name|default:customer.username }},
+
+Thank you for your order! We have received your order and it is being processed. Here are your order details:
+
+ORDER DETAILS:
+Order #{{ order.id }}
+Order Date: {{ order.created_at|date:"M d, Y H:i" }}
+Total Amount: Rs. {{ order.total_amount }}
+Payment Method: {{ order.get_payment_method_display }}
+
+{% if order.payment_method == 'cod' %}
+Payment: You will pay Rs. {{ order.total_amount }} when your order is delivered.
+{% endif %}
+
+ITEMS ORDERED:
+{% for item in order.items.all %}
+- {{ item.medicine_name }} ({{ item.medicine_strength }}) - Qty: {{ item.quantity }} - Rs. {{ item.total_price }}
+{% endfor %}
+
+DELIVERY ADDRESS:
+{{ order.shipping_address }}
+{{ order.shipping_city }}, {{ order.shipping_country }}
+Phone: {{ order.shipping_phone }}
+
+{% if order.requires_prescription %}
+📋 PRESCRIPTION REQUIRED: Your order contains prescription medicines. Please ensure you have uploaded a valid prescription. Our pharmacist will verify it before processing your order.
+{% endif %}
+
+Track Your Order: http://127.0.0.1:8003/orders/{{ order.id }}/
+
+WHAT'S NEXT?
+- We will process your order within 2-4 hours
+- You will receive updates via email and SMS
+- Expected delivery: 1-2 business days
+- For urgent queries, call us at +977-1-4567890
+
+Thank you for choosing {{ site_name }} for your healthcare needs!
+
+---
+{{ site_name }} - Your Health, Our Priority
+Email: info@pharmazone.com.np | Phone: +977-1-4567890
+Kathmandu, Nepal

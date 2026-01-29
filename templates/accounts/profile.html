@@ -24,8 +24,6 @@
                             <h6>Address Information</h6>
                             <p><strong>Address:</strong> {{ user.address|default:"Not provided" }}</p>
                             <p><strong>City:</strong> {{ user.city|default:"Not provided" }}</p>
-                            <p><strong>State:</strong> {{ user.state|default:"Not provided" }}</p>
-                            <p><strong>Postal Code:</strong> {{ user.postal_code|default:"Not provided" }}</p>
                             <p><strong>Country:</strong> {{ user.country }}</p>
                         </div>
                     </div>
@@ -66,12 +64,14 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
+                        {% if user.user_type != 'admin' and not user.is_staff %}
                         <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary">
                             <i class="fas fa-box"></i> My Orders
                         </a>
                         <a href="{% url 'cart:cart' %}" class="btn btn-outline-primary">
                             <i class="fas fa-shopping-cart"></i> Shopping Cart
                         </a>
+                        {% endif %}
                         {% if user.user_type == 'customer' %}
                             <a href="{% url 'orders:shipping_addresses' %}" class="btn btn-outline-primary">
                                 <i class="fas fa-map-marker-alt"></i> Addresses
@@ -80,6 +80,17 @@
                         {% if user.user_type == 'pharmacy' %}
                             <a href="{% url 'accounts:pharmacy_dashboard' %}" class="btn btn-outline-primary">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        {% endif %}
+                        {% if user.user_type == 'admin' or user.is_staff %}
+                            <a href="{% url 'doctor_appointments:admin_dashboard' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-chart-bar"></i> Admin Dashboard
+                            </a>
+                            <a href="{% url 'products:admin_medicine_list' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-pills"></i> Manage Medicines
+                            </a>
+                            <a href="{% url 'orders:admin_order_list' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-shopping-bag"></i> Manage Orders
                             </a>
                         {% endif %}
                     </div>

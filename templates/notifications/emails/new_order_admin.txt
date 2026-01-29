@@ -1,0 +1,35 @@
+{{ site_name }} - New Order Received!
+
+Hello {{ admin.username }},
+
+A new order has been placed on {{ site_name }}. Please review the details below:
+
+ORDER DETAILS:
+Order #{{ order.id }}
+Customer: {{ order.user.get_full_name|default:order.user.username }}
+Email: {{ order.user.email }}
+Total Amount: Rs. {{ order.total_amount }}
+Payment Method: {{ order.get_payment_method_display }}
+Order Date: {{ order.created_at|date:"M d, Y H:i" }}
+
+{% if order.requires_prescription %}
+⚠️ PRESCRIPTION REQUIRED: This order contains prescription medicines that need verification.
+{% endif %}
+
+ITEMS ORDERED:
+{% for item in order.items.all %}
+- {{ item.medicine_name }} ({{ item.medicine_strength }}) - Qty: {{ item.quantity }} - Rs. {{ item.total_price }}
+{% endfor %}
+
+DELIVERY ADDRESS:
+{{ order.shipping_address }}
+{{ order.shipping_city }}, {{ order.shipping_country }}
+Phone: {{ order.shipping_phone }}
+
+View Order Details: http://127.0.0.1:8003/orders/admin/{{ order.id }}/
+
+Please process this order as soon as possible to ensure timely delivery to the customer.
+
+---
+This is an automated notification from {{ site_name }}.
+Please do not reply to this email.

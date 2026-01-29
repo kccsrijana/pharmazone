@@ -28,10 +28,7 @@ class User(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     address = models.TextField(blank=True)
     city = models.CharField(max_length=100, blank=True)
-    state = models.CharField(max_length=100, blank=True)
-    postal_code = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=100, default='Nepal')
-    is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

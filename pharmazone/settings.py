@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'cart',
     'orders',
     'payments',
+    'pharmacist_chat',
+    'doctor_appointments',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +55,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'pharmazone.middleware.AdminRedirectMiddleware',  # Custom admin redirect
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -133,7 +137,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Login/Logout URLs
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+# LOGIN_REDIRECT_URL = '/'  # Commented out to use custom redirect logic
 LOGOUT_REDIRECT_URL = '/'
 
 # Session settings
@@ -142,6 +146,16 @@ CART_SESSION_ID = 'cart'
 
 # Email settings (for development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'Pharmazone <noreply@pharmazone.com.np>'
+EMAIL_HOST_USER = 'noreply@pharmazone.com.np'
+
+# For production, use SMTP:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'your-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'your-app-password'
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'

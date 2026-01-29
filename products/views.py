@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q, Avg
 from django.http import JsonResponse
@@ -6,7 +6,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Category, Medicine, Manufacturer, MedicineReview
-from .forms import MedicineReviewForm
+from .forms import MedicineReviewForm, AdminMedicineForm, CategoryForm, ManufacturerForm
+
+
+def is_secure_admin(user):
+    """Check if user is a secure admin"""
+    return (user.is_authenticated and 
+            user.is_staff and 
+            user.username == 'admin')
 
 
 def home_view(request):
@@ -221,3 +228,285 @@ def search_suggestions(request):
             return JsonResponse({'suggestions': suggestions})
     
     return JsonResponse({'suggestions': []})
+
+
+# Admin Medicine Management Views
+@login_required
+def admin_medicine_list(request):
+    """Admin view for managing medicines"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    medicines = Medicine.objects.all().order_by('-created_at')
+    
+    # Search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        medicines = medicines.filter(
+            Q(name__icontains=search_query) |
+            Q(generic_name__icontains=search_query) |
+            Q(category__name__icontains=search_query) |
+            Q(manufacturer__name__icontains=search_query)
+        )
+    
+    # Category filter
+    category_id = request.GET.get('category')
+    if category_id:
+        medicines = medicines.filter(category_id=category_id)
+    
+    # Status filter
+    status_filter = request.GET.get('status')
+    if status_filter == 'active':
+        medicines = medicines.filter(is_active=True)
+    elif status_filter == 'inactive':
+        medicines = medicines.filter(is_active=False)
+    elif status_filter == 'featured':
+        medicines = medicines.filter(is_featured=True)
+    elif status_filter == 'low_stock':
+        medicines = medicines.filter(stock_quantity__lte=10)
+    elif status_filter == 'out_of_stock':
+        medicines = medicines.filter(stock_quantity=0)
+    
+    # Pagination
+    paginator = Paginator(medicines, 20)
+    page_number = request.GET.get('page')
+    medicines = paginator.get_page(page_number)
+    
+    # Get filter options
+    categories = Category.objects.all()
+    
+    context = {
+        'medicines': medicines,
+        'categories': categories,
+        'search_query': search_query,
+        'selected_category': category_id,
+        'status_filter': status_filter,
+    }
+    return render(request, 'products/admin_medicine_list.html', context)
+
+
+@login_required
+def admin_medicine_detail(request, medicine_id):
+    """Admin view for medicine details"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    medicine = get_object_or_404(Medicine, id=medicine_id)
+    
+    context = {
+        'medicine': medicine,
+    }
+    return render(request, 'products/admin_medicine_detail.html', context)
+
+
+@login_required
+def admin_medicine_add(request):
+    """Admin view for adding new medicine"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    if request.method == 'POST':
+        form = AdminMedicineForm(request.POST, request.FILES)
+        if form.is_valid():
+            medicine = form.save()
+            messages.success(request, f'Medicine "{medicine.name}" added successfully!')
+            return redirect('products:admin_medicine_detail', medicine_id=medicine.id)
+    else:
+        form = AdminMedicineForm()
+    
+    context = {
+        'form': form,
+        'title': 'Add New Medicine',
+        'action': 'Add',
+    }
+    return render(request, 'products/admin_medicine_form.html', context)
+
+
+@login_required
+def admin_medicine_edit(request, medicine_id):
+    """Admin view for editing medicine"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    medicine = get_object_or_404(Medicine, id=medicine_id)
+    
+    if request.method == 'POST':
+        form = AdminMedicineForm(request.POST, request.FILES, instance=medicine)
+        if form.is_valid():
+            medicine = form.save()
+            messages.success(request, f'Medicine "{medicine.name}" updated successfully!')
+            return redirect('products:admin_medicine_detail', medicine_id=medicine.id)
+    else:
+        form = AdminMedicineForm(instance=medicine)
+    
+    context = {
+        'form': form,
+        'medicine': medicine,
+        'title': f'Edit {medicine.name}',
+        'action': 'Update',
+    }
+    return render(request, 'products/admin_medicine_form.html', context)
+
+
+@login_required
+def admin_medicine_delete(request, medicine_id):
+    """Admin view for deleting medicine"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    medicine = get_object_or_404(Medicine, id=medicine_id)
+    
+    if request.method == 'POST':
+        medicine_name = medicine.name
+        medicine.delete()
+        messages.success(request, f'Medicine "{medicine_name}" deleted successfully!')
+        return redirect('products:admin_medicine_list')
+    
+    context = {
+        'medicine': medicine,
+    }
+    return render(request, 'products/admin_medicine_delete.html', context)
+
+
+@login_required
+def admin_medicine_toggle_status(request, medicine_id):
+    """Admin view for toggling medicine active status"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    medicine = get_object_or_404(Medicine, id=medicine_id)
+    medicine.is_active = not medicine.is_active
+    medicine.save()
+    
+    status = 'activated' if medicine.is_active else 'deactivated'
+    messages.success(request, f'Medicine "{medicine.name}" {status} successfully!')
+    
+    return redirect('products:admin_medicine_list')
+
+
+@login_required
+def admin_medicine_toggle_featured(request, medicine_id):
+    """Admin view for toggling medicine featured status"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    medicine = get_object_or_404(Medicine, id=medicine_id)
+    medicine.is_featured = not medicine.is_featured
+    medicine.save()
+    
+    status = 'featured' if medicine.is_featured else 'unfeatured'
+    messages.success(request, f'Medicine "{medicine.name}" {status} successfully!')
+    
+    return redirect('products:admin_medicine_list')
+
+
+@login_required
+def admin_category_list(request):
+    """Admin view for managing categories"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    categories = Category.objects.all().order_by('name')
+    
+    context = {
+        'categories': categories,
+    }
+    return render(request, 'products/admin_category_list.html', context)
+
+
+@login_required
+def admin_category_add(request):
+    """Admin view for adding new category"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            category = form.save()
+            messages.success(request, f'Category "{category.name}" added successfully!')
+            return redirect('products:admin_category_list')
+    else:
+        form = CategoryForm()
+    
+    context = {
+        'form': form,
+        'title': 'Add New Category',
+        'action': 'Add',
+    }
+    return render(request, 'products/admin_category_form.html', context)
+
+
+@login_required
+def admin_category_edit(request, category_id):
+    """Admin view for editing category"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    category = get_object_or_404(Category, id=category_id)
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            category = form.save()
+            messages.success(request, f'Category "{category.name}" updated successfully!')
+            return redirect('products:admin_category_list')
+    else:
+        form = CategoryForm(instance=category)
+    
+    context = {
+        'form': form,
+        'category': category,
+        'title': f'Edit {category.name}',
+        'action': 'Update',
+    }
+    return render(request, 'products/admin_category_form.html', context)
+
+
+@login_required
+def admin_manufacturer_list(request):
+    """Admin view for managing manufacturers"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    manufacturers = Manufacturer.objects.all().order_by('name')
+    
+    context = {
+        'manufacturers': manufacturers,
+    }
+    return render(request, 'products/admin_manufacturer_list.html', context)
+
+
+@login_required
+def admin_manufacturer_add(request):
+    """Admin view for adding new manufacturer"""
+    if not is_secure_admin(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('products:home')
+    
+    if request.method == 'POST':
+        form = ManufacturerForm(request.POST, request.FILES)
+        if form.is_valid():
+            manufacturer = form.save()
+            messages.success(request, f'Manufacturer "{manufacturer.name}" added successfully!')
+            return redirect('products:admin_manufacturer_list')
+    else:
+        form = ManufacturerForm()
+    
+    context = {
+        'form': form,
+        'title': 'Add New Manufacturer',
+        'action': 'Add',
+    }
+    return render(request, 'products/admin_manufacturer_form.html', context)

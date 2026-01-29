@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>New Order - {{ site_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .order-details { background: white; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ site_name }}</h1>
+            <h2>New Order Received!</h2>
+        </div>
+        
+        <div class="content">
+            <p>Hello {{ admin.username }},</p>
+            
+            <p>A new order has been placed on {{ site_name }}. Please review the details below:</p>
+            
+            <div class="order-details">
+                <h3>Order #{{ order.id }}</h3>
+                <p><strong>Customer:</strong> {{ order.user.get_full_name|default:order.user.username }}</p>
+                <p><strong>Email:</strong> {{ order.user.email }}</p>
+                <p><strong>Total Amount:</strong> Rs. {{ order.total_amount }}</p>
+                <p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
+                <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y H:i" }}</p>
+                
+                {% if order.requires_prescription %}
+                    <p><strong>⚠️ Prescription Required:</strong> This order contains prescription medicines that need verification.</p>
+                {% endif %}
+                
+                <h4>Items Ordered:</h4>
+                <ul>
+                    {% for item in order.items.all %}
+                        <li>{{ item.medicine_name }} ({{ item.medicine_strength }}) - Qty: {{ item.quantity }} - Rs. {{ item.total_price }}</li>
+                    {% endfor %}
+                </ul>
+                
+                <h4>Delivery Address:</h4>
+                <p>
+                    {{ order.shipping_address }}<br>
+                    {{ order.shipping_city }}, {{ order.shipping_country }}<br>
+                    Phone: {{ order.shipping_phone }}
+                </p>
+            </div>
+            
+            <p style="text-align: center;">
+                <a href="http://127.0.0.1:8003/orders/admin/{{ order.id }}/" class="btn">View Order Details</a>
+            </p>
+            
+            <p>Please process this order as soon as possible to ensure timely delivery to the customer.</p>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated notification from {{ site_name }}.<br>
+            Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

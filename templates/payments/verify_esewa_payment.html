@@ -1,0 +1,93 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Verify eSewa Payment - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-check-circle"></i> Verify eSewa Payment</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Payment Verification Instructions:</h6>
+                        <ol>
+                            <li>After completing payment in eSewa test environment, you'll get a <strong>Transaction UUID</strong> and <strong>Reference ID</strong></li>
+                            <li>Copy these details and paste them below to verify your payment</li>
+                            <li>Your order will be confirmed once payment is verified</li>
+                        </ol>
+                    </div>
+
+                    {% if pending_payments %}
+                    <div class="mb-4">
+                        <h6>Your Pending Payments:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Amount</th>
+                                        <th>Transaction UUID</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for payment in pending_payments %}
+                                    <tr>
+                                        <td>{{ payment.order.order_number }}</td>
+                                        <td>Rs. {{ payment.amount }}</td>
+                                        <td><code>{{ payment.gateway_transaction_id }}</code></td>
+                                        <td>{{ payment.created_at|date:"M d, Y H:i" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="transaction_uuid" class="form-label">Transaction UUID <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="transaction_uuid" name="transaction_uuid" 
+                                           placeholder="e.g., 12345678-1234-1234-1234-123456789012" required>
+                                    <small class="text-muted">Copy this from eSewa payment confirmation page</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="reference_id" class="form-label">eSewa Reference ID <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="reference_id" name="reference_id" 
+                                           placeholder="e.g., 0000ABC123" required>
+                                    <small class="text-muted">Reference ID provided by eSewa after successful payment</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Verify Payment
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr>
+                    
+                    <div class="text-center">
+                        <h6>Need Help?</h6>
+                        <p class="text-muted">
+                            If you completed payment in eSewa but don't have the reference details, 
+                            <a href="{% url 'orders:order_list' %}">check your orders</a> or contact support.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
