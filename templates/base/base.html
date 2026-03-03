@@ -694,13 +694,6 @@
                                 <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">
                                     <i class="fas fa-tasks me-2"></i>Manage Orders
                                 </a></li>
-                            {% elif user.user_type == 'pharmacy' %}
-                                <li><a class="dropdown-item" href="{% url 'accounts:pharmacy_dashboard' %}">
-                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                                </a></li>
-                                <li><a class="dropdown-item" href="{% url 'orders:admin_order_list' %}">
-                                    <i class="fas fa-tasks me-2"></i>Manage Orders
-                                </a></li>
                             {% elif user.user_type == 'customer' %}
                                 <li><a class="dropdown-item" href="{% url 'accounts:customer_dashboard' %}">
                                     <i class="fas fa-tachometer-alt me-2"></i>Dashboard

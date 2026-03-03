@@ -8,7 +8,6 @@ class User(AbstractUser):
     
     USER_TYPE_CHOICES = [
         ('customer', 'Customer'),
-        ('pharmacy', 'Pharmacy'),
         ('admin', 'Admin'),
     ]
     

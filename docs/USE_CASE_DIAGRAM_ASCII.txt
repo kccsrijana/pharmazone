@@ -1,0 +1,249 @@
+╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                    PHARMAZONE USE CASE DIAGRAM                                    ║
+║                              E-Commerce Pharmacy Platform System                                  ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+                                    ┌─────────────────┐
+                                    │   📧 Email      │
+                                    │     System      │
+                                    └────────┬────────┘
+                                             │
+                                             │
+    ┌──────────┐                    ╔════════════════════════════════════════════════╗
+    │   👤     │                    ║                                                ║
+    │ Customer │                    ║         PHARMAZONE SYSTEM BOUNDARY             ║
+    │          │                    ║                                                ║
+    └────┬─────┘                    ║  ┌──────────────────────────────────────┐    ║
+         │                          ║  │   AUTHENTICATION & PROFILE           │    ║
+         │                          ║  │   • Register Account                 │    ║
+         ├──────────────────────────║──│   • Login / Logout                   │────║──────┐
+         │                          ║  │   • Update Profile                   │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   MEDICINE SHOPPING                  │    ║      │
+         ├──────────────────────────║──│   • Browse Medicines                 │    ║      │
+         │                          ║  │   • Search Medicines                 │    ║      │
+         │                          ║  │   • View Medicine Details            │    ║      │
+         │                          ║  │   • Filter by Category               │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   SHOPPING CART                      │    ║      │
+         ├──────────────────────────║──│   • Add to Cart                      │    ║      │
+         │                          ║  │   • Update Cart Quantity             │    ║      │
+         │                          ║  │   • Remove from Cart                 │    ║      │
+         │                          ║  │   • View Cart                        │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   ORDER MANAGEMENT                   │    ║      │
+         ├──────────────────────────║──│   • Checkout                         │    ║      │
+         │                          ║  │   • Place Order                      │────║──────┤
+         │                          ║  │   • Track Order Status               │    ║      │
+         │                          ║  │   • View Order History               │    ║      │
+         │                          ║  │   • Cancel Order                     │    ║      │
+         │                          ║  │   • Request Refund                   │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   PAYMENT PROCESSING                 │    ║      │
+         │                          ║  │   • Make Payment (eSewa)             │────║──────┤
+         │                          ║  │   • Make Payment (COD)               │    ║      │
+         ├──────────────────────────║──│   • View Payment History             │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║            │                                  ║      │
+         │                          ║            │                                  ║      │
+         │                          ║            ▼                                  ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   INVOICE MANAGEMENT                 │    ║      │
+         ├──────────────────────────║──│   • View Invoice                     │    ║      │
+         │                          ║  │   • Download Invoice PDF             │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   DOCTOR APPOINTMENTS                │    ║      │
+         ├──────────────────────────║──│   • Browse Doctors                   │    ║      │
+         │                          ║  │   • View Doctor Profile              │    ║      │
+         │                          ║  │   • Check Available Slots            │    ║      │
+         │                          ║  │   • Book Appointment                 │────║──────┤
+         │                          ║  │   • View My Appointments             │    ║      │
+         │                          ║  │   • Cancel Appointment               │    ║      │
+         │                          ║  │   • Reschedule Appointment           │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   PHARMACIST CHAT                    │    ║      │
+         ├──────────────────────────║──│   • Start Chat Session               │    ║      │
+         │                          ║  │   • Send Message                     │    ║      │
+         │                          ║  │   • View Quick Responses             │    ║      │
+         │                          ║  │   • View Chat History                │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   ADMIN DASHBOARD                    │    ║      │
+         │                          ║  │   • View Dashboard                   │────║──────┤
+         │                          ║  │   • View Business Statistics         │    ║      │
+         │                          ║  │   • View Sales Reports               │    ║      │
+         │                          ║  │   • View Revenue Analytics           │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   MEDICINE MANAGEMENT (Admin)        │    ║      │
+         │                          ║  │   • View Medicine List               │────║──────┤
+         │                          ║  │   • Add New Medicine                 │    ║      │
+         │                          ║  │   • Edit Medicine Details            │    ║      │
+         │                          ║  │   • Delete Medicine                  │    ║      │
+         │                          ║  │   • Toggle Medicine Status           │    ║      │
+         │                          ║  │   • Update Stock Quantity            │    ║      │
+         │                          ║  │   • Manage Categories                │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   ORDER MANAGEMENT (Admin)           │    ║      │
+         │                          ║  │   • View All Orders                  │────║──────┤
+         │                          ║  │   • View Order Details               │    ║      │
+         │                          ║  │   • Update Order Status              │────║──────┤
+         │                          ║  │   • Process Order                    │    ║      │
+         │                          ║  │   • Mark as Shipped                  │    ║      │
+         │                          ║  │   • Mark as Delivered                │    ║      │
+         │                          ║  │   • Cancel Order                     │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   APPOINTMENT MANAGEMENT (Admin)     │    ║      │
+         │                          ║  │   • View All Appointments            │────║──────┤
+         │                          ║  │   • View Appointment Details         │    ║      │
+         │                          ║  │   • Confirm Appointment              │    ║      │
+         │                          ║  │   • Reschedule Appointment           │    ║      │
+         │                          ║  │   • Cancel Appointment               │    ║      │
+         │                          ║  │   • Manage Doctor Schedules          │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   PAYMENT MANAGEMENT (Admin)         │    ║      │
+         │                          ║  │   • View All Payments                │────║──────┤
+         │                          ║  │   • Verify Payments                  │    ║      │
+         │                          ║  │   • Process Refunds                  │    ║      │
+         │                          ║  │   • Generate Invoices                │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ║  ┌──────────────────────────────────────┐    ║      │
+         │                          ║  │   USER MANAGEMENT (Admin)            │    ║      │
+         │                          ║  │   • View All Users                   │────║──────┤
+         │                          ║  │   • View User Details                │    ║      │
+         │                          ║  │   • Manage User Accounts             │    ║      │
+         │                          ║  └──────────────────────────────────────┘    ║      │
+         │                          ║                                                ║      │
+         │                          ╚════════════════════════════════════════════════╝      │
+         │                                             │                                     │
+         │                                             │                                     │
+         │                                             ▼                                     │
+         │                                    ┌─────────────────┐                           │
+         │                                    │   💳 eSewa      │◄──────────────────────────┘
+         └────────────────────────────────────│   Payment      │
+                                              │   Gateway      │
+                                              └─────────────────┘
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                          LEGEND                                                   ║
+╠══════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                                   ║
+║  👤 Customer        - End user who purchases medicines and books appointments                    ║
+║  👨‍💼 Admin           - System administrator who manages the platform                              ║
+║  💳 eSewa Gateway   - External payment processing system                                         ║
+║  📧 Email System    - External email notification system                                         ║
+║                                                                                                   ║
+║  ──────────────     - Association (Actor interacts with Use Case)                               ║
+║  ─────────────►     - Include relationship (mandatory sub-use case)                             ║
+║  ············►      - Extend relationship (optional extension)                                   ║
+║                                                                                                   ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                    USE CASE SUMMARY                                               ║
+╠══════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                                   ║
+║  Total Use Cases: 50+                                                                            ║
+║                                                                                                   ║
+║  CUSTOMER USE CASES (39):                                                                        ║
+║    • Authentication & Profile Management (5)                                                     ║
+║    • Medicine Shopping (6)                                                                       ║
+║    • Shopping Cart Management (4)                                                                ║
+║    • Order Management (6)                                                                        ║
+║    • Payment Processing (3)                                                                      ║
+║    • Invoice Management (2)                                                                      ║
+║    • Doctor Appointments (7)                                                                     ║
+║    • Pharmacist Chat (4)                                                                         ║
+║                                                                                                   ║
+║  ADMIN USE CASES (34):                                                                           ║
+║    • Dashboard & Analytics (4)                                                                   ║
+║    • Medicine Management (7)                                                                     ║
+║    • Order Management (7)                                                                        ║
+║    • Appointment Management (6)                                                                  ║
+║    • Payment Management (4)                                                                      ║
+║    • Invoice Management (3)                                                                      ║
+║    • User Management (3)                                                                         ║
+║                                                                                                   ║
+║  EXTERNAL SYSTEM USE CASES (11):                                                                 ║
+║    • eSewa Payment Gateway (6)                                                                   ║
+║    • Email Notification System (5)                                                               ║
+║                                                                                                   ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                              KEY USE CASE RELATIONSHIPS                                           ║
+╠══════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                                   ║
+║  INCLUDE RELATIONSHIPS (mandatory):                                                              ║
+║    • Place Order ──includes──► Checkout                                                          ║
+║    • Place Order ──includes──► Enter Delivery Address                                            ║
+║    • Place Order ──includes──► Select Payment Method                                             ║
+║    • Make Payment (eSewa) ──includes──► Process Payment                                          ║
+║    • Make Payment (eSewa) ──includes──► Verify Transaction                                       ║
+║    • Book Appointment ──includes──► View Doctor Profile                                          ║
+║    • Book Appointment ──includes──► Check Available Slots                                        ║
+║                                                                                                   ║
+║  EXTEND RELATIONSHIPS (optional):                                                                ║
+║    • Place Order ··extends··► Send Order Confirmation Email                                      ║
+║    • Make Payment (eSewa) ··extends··► Send Payment Receipt                                      ║
+║    • Book Appointment ··extends··► Send Appointment Confirmation                                 ║
+║    • Update Order Status ··extends··► Send Status Update Email                                   ║
+║                                                                                                   ║
+║  GENERALIZATION RELATIONSHIPS:                                                                   ║
+║    • Make Payment ◄──generalizes── Make Payment (eSewa)                                          ║
+║    • Make Payment ◄──generalizes── Make Payment (COD)                                            ║
+║                                                                                                   ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                   SYSTEM FEATURES                                                 ║
+╠══════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                                   ║
+║  ✓ User Authentication & Authorization (Role-based: Customer, Admin)                            ║
+║  ✓ Medicine Catalog with Search & Filter                                                        ║
+║  ✓ Shopping Cart Management                                                                     ║
+║  ✓ Order Processing & Tracking                                                                  ║
+║  ✓ Multiple Payment Methods (eSewa, Cash on Delivery)                                           ║
+║  ✓ Automated Invoice Generation (PDF)                                                           ║
+║  ✓ Doctor Appointment Booking System                                                            ║
+║  ✓ Pharmacist Chat Consultation                                                                 ║
+║  ✓ Admin Dashboard with Analytics                                                               ║
+║  ✓ Email Notification System                                                                    ║
+║  ✓ Secure Payment Gateway Integration                                                           ║
+║  ✓ Responsive Design (Desktop & Mobile)                                                         ║
+║                                                                                                   ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+Project: Pharmazone - E-Commerce Pharmacy Platform
+Student: Srijana Khatri
+Institution: St. Xavier's College, Maitighar
+Program: Bachelor of Information Management (BIM) - 6th Semester
+Year: 2026

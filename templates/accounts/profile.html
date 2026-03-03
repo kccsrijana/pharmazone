@@ -31,18 +31,7 @@
                     {% if profile %}
                         <hr>
                         <h6>Additional Information</h6>
-                        {% if user.user_type == 'pharmacy' %}
-                            <p><strong>Pharmacy Name:</strong> {{ profile.pharmacy_name }}</p>
-                            <p><strong>License Number:</strong> {{ profile.license_number }}</p>
-                            <p><strong>GST Number:</strong> {{ profile.gst_number|default:"Not provided" }}</p>
-                            <p><strong>Approved:</strong> 
-                                {% if profile.is_approved %}
-                                    <span class="badge bg-success">Yes</span>
-                                {% else %}
-                                    <span class="badge bg-warning">Pending</span>
-                                {% endif %}
-                            </p>
-                        {% elif user.user_type == 'customer' %}
+                        {% if user.user_type == 'customer' %}
                             <p><strong>Emergency Contact:</strong> {{ profile.emergency_contact|default:"Not provided" }}</p>
                             <p><strong>Medical Conditions:</strong> {{ profile.medical_conditions|default:"None reported" }}</p>
                         {% endif %}
@@ -75,11 +64,6 @@
                         {% if user.user_type == 'customer' %}
                             <a href="{% url 'orders:shipping_addresses' %}" class="btn btn-outline-primary">
                                 <i class="fas fa-map-marker-alt"></i> Addresses
-                            </a>
-                        {% endif %}
-                        {% if user.user_type == 'pharmacy' %}
-                            <a href="{% url 'accounts:pharmacy_dashboard' %}" class="btn btn-outline-primary">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         {% endif %}
                         {% if user.user_type == 'admin' or user.is_staff %}

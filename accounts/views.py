@@ -8,8 +8,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, UpdateView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import CustomUserCreationForm, PharmacyProfileForm, CustomerProfileForm, UserUpdateForm, LoginForm
-from .models import User, PharmacyProfile, CustomerProfile
+from .forms import CustomUserCreationForm, CustomerProfileForm, UserUpdateForm, LoginForm
+from .models import User, CustomerProfile
 
 
 def login_view(request):
@@ -41,9 +41,7 @@ def login_view(request):
                         request.session.set_expiry(0)  # Session expires when browser closes
                     
                     # Redirect based on user type with secure admin check
-                    if user.user_type == 'pharmacy':
-                        return redirect('accounts:pharmacy_dashboard')
-                    elif (user.is_staff and 
+                    if (user.is_staff and 
                           (user.is_superuser or user.user_type == 'admin') and
                           user.username in ['admin']):  # Secure admin check
                         return redirect('doctor_appointments:admin_dashboard')
@@ -90,10 +88,8 @@ def profile_view(request):
     """User profile view"""
     user = request.user
     
-    # Get or create profile based on user type
-    if user.user_type == 'pharmacy':
-        profile, created = PharmacyProfile.objects.get_or_create(user=user)
-    elif user.user_type == 'customer':
+    # Get or create profile for customer
+    if user.user_type == 'customer':
         profile, created = CustomerProfile.objects.get_or_create(user=user)
     else:
         profile = None
@@ -113,14 +109,11 @@ def update_profile(request):
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=user)
         
-        if user.user_type == 'pharmacy':
-            profile, created = PharmacyProfile.objects.get_or_create(user=user)
-            profile_form = PharmacyProfileForm(request.POST, instance=profile)
-        elif user.user_type == 'customer':
+        if user.user_type == 'customer':
             profile, created = CustomerProfile.objects.get_or_create(user=user)
             profile_form = CustomerProfileForm(request.POST, instance=profile)
         else:
-            # For admin users and other types, no additional profile form needed
+            # For admin users, no additional profile form needed
             profile_form = None
         
         if user_form.is_valid() and (profile_form is None or profile_form.is_valid()):
@@ -142,14 +135,11 @@ def update_profile(request):
     else:
         user_form = UserUpdateForm(instance=user)
         
-        if user.user_type == 'pharmacy':
-            profile, created = PharmacyProfile.objects.get_or_create(user=user)
-            profile_form = PharmacyProfileForm(instance=profile)
-        elif user.user_type == 'customer':
+        if user.user_type == 'customer':
             profile, created = CustomerProfile.objects.get_or_create(user=user)
             profile_form = CustomerProfileForm(instance=profile)
         else:
-            # For admin users and other types, no additional profile form needed
+            # For admin users, no additional profile form needed
             profile_form = None
     
     context = {
@@ -157,20 +147,6 @@ def update_profile(request):
         'profile_form': profile_form,
     }
     return render(request, 'accounts/update_profile.html', context)
-
-
-@login_required
-def pharmacy_dashboard(request):
-    """Pharmacy dashboard view"""
-    if request.user.user_type != 'pharmacy':
-        messages.error(request, 'Access denied. This page is for pharmacy users only.')
-        return redirect('home')
-    
-    pharmacy_profile = request.user.pharmacy_profile
-    context = {
-        'pharmacy_profile': pharmacy_profile,
-    }
-    return render(request, 'accounts/pharmacy_dashboard.html', context)
 
 
 @login_required

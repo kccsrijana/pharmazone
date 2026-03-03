@@ -429,8 +429,8 @@ def admin_order_detail(request, order_id):
 
 @login_required
 def prescription_review(request, prescription_id):
-    """Review prescription (admin/pharmacy only)"""
-    if not (request.user.is_staff or request.user.user_type == 'pharmacy'):
+    """Review prescription (admin only)"""
+    if not request.user.is_staff:
         messages.error(request, 'Access denied.')
         return redirect('home')
     

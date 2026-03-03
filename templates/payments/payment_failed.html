@@ -1,0 +1,161 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Payment Failed - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-danger">
+                <div class="card-body text-center py-5">
+                    <!-- Failed Icon -->
+                    <div class="mb-4">
+                        <i class="fas fa-times-circle text-danger" style="font-size: 80px;"></i>
+                    </div>
+                    
+                    <!-- Failed Message -->
+                    <h2 class="text-danger mb-3">Payment Failed</h2>
+                    <p class="lead text-muted mb-4">
+                        Unfortunately, your payment could not be processed.
+                    </p>
+                    
+                    {% if payment %}
+                    <div class="alert alert-danger mb-4">
+                        <h5 class="alert-heading">Payment Details</h5>
+                        <hr>
+                        <p class="mb-1"><strong>Payment ID:</strong> {{ payment.payment_id }}</p>
+                        <p class="mb-1"><strong>Amount:</strong> Rs. {{ payment.amount }}</p>
+                        <p class="mb-1"><strong>Status:</strong> <span class="badge bg-danger">Failed</span></p>
+                        {% if payment.failure_reason %}
+                        <p class="mb-0"><strong>Reason:</strong> {{ payment.failure_reason }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if order %}
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading">Order Information</h5>
+                        <hr>
+                        <p class="mb-1"><strong>Order Number:</strong> {{ order.order_number }}</p>
+                        <p class="mb-1"><strong>Total Amount:</strong> Rs. {{ order.total_amount }}</p>
+                        <p class="mb-0"><strong>Status:</strong> <span class="badge bg-warning">Pending Payment</span></p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- What to Do Next -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">What to do next?</h5>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Your order is still saved and pending payment
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    You can try paying again from your order details
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Or choose Cash on Delivery instead
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Contact us if you need assistance
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Common Reasons -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Common Reasons for Payment Failure</h5>
+                            <ul class="list-unstyled text-start small">
+                                <li class="mb-1">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    Incorrect eSewa credentials
+                                </li>
+                                <li class="mb-1">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    Insufficient balance in eSewa account
+                                </li>
+                                <li class="mb-1">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    Payment cancelled by user
+                                </li>
+                                <li class="mb-1">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    Network connection issues
+                                </li>
+                                <li class="mb-1">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    Payment gateway timeout
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        {% if order %}
+                        <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-eye me-2"></i>View Order Details
+                        </a>
+                        <a href="{% url 'payments:process_payment' order.id %}" class="btn btn-success btn-lg">
+                            <i class="fas fa-redo me-2"></i>Try Payment Again
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'products:home' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+                    
+                    <!-- Contact Support -->
+                    <div class="mt-4 pt-4 border-top">
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Need help with your payment?
+                        </p>
+                        <p class="mb-0">
+                            <a href="mailto:info@pharmazone.com.np" class="text-decoration-none">
+                                <i class="fas fa-envelope me-2"></i>info@pharmazone.com.np
+                            </a>
+                            <span class="mx-2">|</span>
+                            <a href="tel:+977-1-4567890" class="text-decoration-none">
+                                <i class="fas fa-phone me-2"></i>+977-1-4567890
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+    
+    .btn-lg {
+        padding: 12px 30px;
+        border-radius: 8px;
+    }
+    
+    .alert {
+        border-radius: 10px;
+    }
+    
+    .fa-times-circle {
+        animation: shake 0.5s;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+</style>
+{% endblock %}

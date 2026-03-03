@@ -8,12 +8,17 @@ from .validators import EmailValidator
 class CustomUserCreationForm(UserCreationForm):
     """Custom user creation form with additional fields"""
     
+    # Only allow customer registration through signup form
+    SIGNUP_USER_TYPE_CHOICES = [
+        ('customer', 'Customer'),
+    ]
+    
     email = forms.EmailField(required=True)
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
     phone_number = forms.CharField(max_length=15, required=True)
     user_type = forms.ChoiceField(
-        choices=User.USER_TYPE_CHOICES,
+        choices=SIGNUP_USER_TYPE_CHOICES,
         widget=forms.RadioSelect,
         initial='customer'
     )
@@ -42,6 +47,13 @@ class CustomUserCreationForm(UserCreationForm):
             raise ValidationError("A user with this phone number already exists.")
         return phone_number
     
+    def clean_user_type(self):
+        """Ensure only customer type can be selected during signup"""
+        user_type = self.cleaned_data.get('user_type')
+        if user_type != 'customer':
+            raise ValidationError("Invalid user type. Only customer registration is allowed through signup.")
+        return user_type
+    
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -53,10 +65,8 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
             
-            # Create appropriate profile based on user type
-            if user.user_type == 'pharmacy':
-                PharmacyProfile.objects.create(user=user)
-            elif user.user_type == 'customer':
+            # Create customer profile
+            if user.user_type == 'customer':
                 CustomerProfile.objects.create(user=user)
         
         return user

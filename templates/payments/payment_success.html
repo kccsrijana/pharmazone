@@ -1,0 +1,171 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Payment Successful - Pharmazone{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-success">
+                <div class="card-body text-center py-5">
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
+                    </div>
+                    
+                    <!-- Success Message -->
+                    <h2 class="text-success mb-3">Payment Successful!</h2>
+                    <p class="lead text-muted mb-4">
+                        Thank you for your payment. Your order has been confirmed.
+                    </p>
+                    
+                    {% if payment %}
+                    <div class="alert alert-success mb-4">
+                        <h5 class="alert-heading">Payment Details</h5>
+                        <hr>
+                        <p class="mb-1"><strong>Payment ID:</strong> {{ payment.payment_id }}</p>
+                        <p class="mb-1"><strong>Amount Paid:</strong> Rs. {{ payment.amount }}</p>
+                        <p class="mb-1"><strong>Payment Method:</strong> {{ payment.get_payment_method_display }}</p>
+                        <p class="mb-1"><strong>Status:</strong> <span class="badge bg-success">Completed</span></p>
+                        {% if payment.gateway_transaction_id %}
+                        <p class="mb-0"><strong>Transaction ID:</strong> {{ payment.gateway_transaction_id }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if order %}
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading">Order Information</h5>
+                        <hr>
+                        <p class="mb-1"><strong>Order Number:</strong> {{ order.order_number }}</p>
+                        <p class="mb-1"><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y H:i" }}</p>
+                        <p class="mb-1"><strong>Total Amount:</strong> Rs. {{ order.total_amount }}</p>
+                        <p class="mb-0"><strong>Status:</strong> <span class="badge bg-success">Confirmed</span></p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- What Happens Next -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">What happens next?</h5>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Your order is being processed
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    You'll receive email confirmation shortly
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Your invoice has been generated
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Expected delivery: 1-2 business days
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Track your order anytime from your dashboard
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
+                        {% if order %}
+                        <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-eye me-2"></i>View Order Details
+                        </a>
+                        {% if order.invoice %}
+                        <a href="{% url 'payments:invoice_detail' order.invoice.id %}" class="btn btn-success btn-lg">
+                            <i class="fas fa-file-invoice me-2"></i>View Invoice
+                        </a>
+                        {% endif %}
+                        {% endif %}
+                        <a href="{% url 'products:home' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-home me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                    
+                    <!-- Delivery Information -->
+                    {% if order %}
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Delivery Address</h5>
+                            <p class="mb-1"><strong>{{ order.shipping_name }}</strong></p>
+                            <p class="mb-1">{{ order.shipping_address }}</p>
+                            <p class="mb-1">{{ order.shipping_city }}, {{ order.shipping_country }}</p>
+                            <p class="mb-0">
+                                <i class="fas fa-phone me-2"></i>{{ order.shipping_phone }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Contact Support -->
+                    <div class="mt-4 pt-4 border-top">
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Questions about your order?
+                        </p>
+                        <p class="mb-0">
+                            <a href="mailto:info@pharmazone.com.np" class="text-decoration-none">
+                                <i class="fas fa-envelope me-2"></i>info@pharmazone.com.np
+                            </a>
+                            <span class="mx-2">|</span>
+                            <a href="tel:+977-1-4567890" class="text-decoration-none">
+                                <i class="fas fa-phone me-2"></i>+977-1-4567890
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+    
+    .btn-lg {
+        padding: 12px 30px;
+        border-radius: 8px;
+    }
+    
+    .alert {
+        border-radius: 10px;
+    }
+    
+    .fa-check-circle {
+        animation: scaleIn 0.5s ease-in-out;
+    }
+    
+    @keyframes scaleIn {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+    // Confetti effect on success
+    document.addEventListener('DOMContentLoaded', function() {
+        // Optional: Add confetti library or simple celebration effect
+        console.log('Payment successful! 🎉');
+    });
+</script>
+{% endblock %}
